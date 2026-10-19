@@ -1,0 +1,34 @@
+<Window x:Class="OpenLauncher.UI.Views.ThemedDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="440"
+        SizeToContent="Height"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        FontFamily="{StaticResource UiFont}"
+        Foreground="{StaticResource InkBrush}"
+        UseLayoutRounding="True">
+    <Border Margin="18" Background="{StaticResource SurfaceBrush}" CornerRadius="14" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+            Effect="{StaticResource CardShadow}" MouseLeftButtonDown="OnDragArea">
+        <StackPanel Margin="26,24,26,22">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                <Border x:Name="IconBadge" Width="34" Height="34" CornerRadius="10" Background="{StaticResource AccentSoftBrush}" Margin="0,0,12,0">
+                    <TextBlock x:Name="IconGlyph" Text="&#xE946;" Style="{StaticResource IconGlyph}" FontSize="15" Foreground="{StaticResource AccentBrush}" />
+                </Border>
+                <TextBlock x:Name="TitleText" FontSize="16.5" FontWeight="Bold" VerticalAlignment="Center" TextWrapping="Wrap" MaxWidth="320" />
+            </StackPanel>
+
+            <TextBlock x:Name="MessageText" TextWrapping="Wrap" FontSize="13.5" LineHeight="20" Foreground="{StaticResource InkSecondaryBrush}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,22,0,0">
+                <Button x:Name="CancelButton" Style="{StaticResource SecondaryButton}" Content="Mégse" Margin="0,0,10,0" Click="OnCancel" />
+                <Button x:Name="SecondaryButton" Style="{StaticResource SecondaryButton}" Margin="0,0,10,0" Click="OnSecondary" Visibility="Collapsed" />
+                <Button x:Name="PrimaryButton" Style="{StaticResource PrimaryButton}" IsDefault="True" Click="OnPrimary" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

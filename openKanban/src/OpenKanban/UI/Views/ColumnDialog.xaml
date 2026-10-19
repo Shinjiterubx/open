@@ -1,0 +1,51 @@
+<Window x:Class="OpenKanban.UI.Views.ColumnDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:OpenKanban.UI.Controls"
+        Width="460" SizeToContent="Height" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="NoResize"
+        ShowInTaskbar="False" WindowStartupLocation="CenterOwner"
+        FontFamily="{StaticResource UiFont}" Foreground="{StaticResource InkBrush}" UseLayoutRounding="True">
+    <Border x:Name="Surface" Margin="18" Background="{StaticResource SurfaceBrush}" CornerRadius="14" BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1" Effect="{StaticResource CardShadow}">
+        <StackPanel Margin="26,22,26,22">
+            <TextBlock Text="Oszlop beállításai" FontSize="17" FontWeight="Bold" Margin="0,0,0,16" />
+
+            <TextBlock Text="Név" Style="{StaticResource FieldLabel}" />
+            <TextBox x:Name="NameInput" Style="{StaticResource InputBox}" Tag="pl. Teendő, Folyamatban, Kész"
+                     Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,14" />
+
+            <TextBlock Text="Szín" Style="{StaticResource FieldLabel}" />
+            <controls:ColorPicker Colors="{Binding Palette}" SelectedColor="{Binding Color}" Margin="0,0,0,16" />
+
+            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding HasLimit}" Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="Kártyák számának korlátozása" FontWeight="Medium" />
+                    <TextBlock Text="WIP limit – ennyi kártya fér el legfeljebb az oszlopban" Style="{StaticResource CaptionText}" Margin="0,2,0,0" />
+                </StackPanel>
+            </CheckBox>
+            <StackPanel Visibility="{Binding HasLimit, Converter={StaticResource BoolToVis}}" Margin="0,0,0,14">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Legfeljebb" VerticalAlignment="Center" Margin="0,0,10,0" />
+                    <TextBox Style="{StaticResource InputBox}" Width="70" TextAlignment="Center" Text="{Binding LimitText, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="kártya" VerticalAlignment="Center" Margin="10,0,0,0" />
+                </StackPanel>
+                <TextBlock Text="{Binding LimitHint}" Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,8,0,0" />
+            </StackPanel>
+
+            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding MarksDone}">
+                <StackPanel>
+                    <TextBlock Text="„Kész” oszlop" FontWeight="Medium" />
+                    <TextBlock Text="Az ide húzott kártyák automatikusan késznek jelölődnek" Style="{StaticResource CaptionText}" Margin="0,2,0,0" />
+                </StackPanel>
+            </CheckBox>
+
+            <TextBlock Text="{Binding ErrorText}" Foreground="{StaticResource DangerBrush}" Margin="0,12,0,0" TextWrapping="Wrap"
+                       Visibility="{Binding ErrorText, Converter={StaticResource NotNullToVis}}" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,22,0,0">
+                <Button Style="{StaticResource SecondaryButton}" Content="Mégse" Margin="0,0,10,0" Click="OnCancel" />
+                <Button Style="{StaticResource PrimaryButton}" Content="Mentés" Click="OnSave" />
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</Window>

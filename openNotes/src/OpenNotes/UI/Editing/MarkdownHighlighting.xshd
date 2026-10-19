@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Markdown syntax colouring for the AvalonEdit source editor, in the openNotes palette. -->
+<SyntaxDefinition name="OpenNotesMarkdown" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <Color name="Heading" foreground="#1A0E2F" fontWeight="bold" />
+  <Color name="Marker" foreground="#9C8DBB" fontWeight="bold" />
+  <Color name="Strong" fontWeight="bold" />
+  <Color name="Emphasis" fontStyle="italic" />
+  <Color name="Strike" foreground="#9A93A6" />
+  <Color name="Code" foreground="#5B3E96" background="#F3EFFA" />
+  <Color name="Link" foreground="#5B3E96" />
+  <Color name="Quote" foreground="#6E6480" fontStyle="italic" />
+  <Color name="TaskDone" foreground="#A49DB0" />
+  <Color name="Rule" foreground="#C3B9D6" />
+
+  <RuleSet>
+    <Span color="Code" multiline="true">
+      <Begin>^[ \t]*```.*$</Begin>
+      <End>^[ \t]*```</End>
+    </Span>
+    <Span color="Code" multiline="true">
+      <Begin>^[ \t]*~~~.*$</Begin>
+      <End>^[ \t]*~~~</End>
+    </Span>
+
+    <Rule color="Heading">^[ \t]*\#{1,6}[ \t].*$</Rule>
+    <Rule color="Rule">^[ \t]*(-{3,}|\*{3,}|_{3,})[ \t]*$</Rule>
+    <Rule color="TaskDone">^[ \t]*[-*+][ \t]+\[[xX]\].*$</Rule>
+    <Rule color="Quote">^[ \t]*&gt;.*$</Rule>
+    <Rule color="Marker">^[ \t]*([-*+]|\d+[.)])[ \t]+(\[[ ]\][ \t])?</Rule>
+    <Rule color="Code">`[^`\r\n]+`</Rule>
+    <Rule color="Link">!?\[[^\]\r\n]*\]\([^)\r\n]*\)</Rule>
+    <Rule color="Strong">\*\*[^*\r\n]+\*\*|__[^_\r\n]+__</Rule>
+    <Rule color="Strike">~~[^~\r\n]+~~</Rule>
+    <Rule color="Emphasis">(?&lt;![*\w])\*[^*\s][^*\r\n]*\*(?!\*)|(?&lt;![_\w])_[^_\s][^_\r\n]*_(?![_\w])</Rule>
+  </RuleSet>
+</SyntaxDefinition>

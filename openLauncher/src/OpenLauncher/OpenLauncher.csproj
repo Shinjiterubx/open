@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <AssemblyName>openLauncher</AssemblyName>
+    <RootNamespace>OpenLauncher</RootNamespace>
+    <ApplicationIcon>Assets\openLauncher.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <Version>1.0.0</Version>
+    <Product>openLauncher</Product>
+    <Company>openLauncher contributors</Company>
+    <Authors>Szegedi Tamás and contributors</Authors>
+    <Copyright>Copyright © 2026 Szegedi Tamás and contributors</Copyright>
+    <Description>openLauncher – starts, installs and removes the open* apps.</Description>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- The WPF SDK leaves System.IO out of the implicit usings. -->
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\openLauncher.ico" />
+    <Resource Include="Assets\icon.png" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\Apps\*.png" />
+    <Resource Include="Assets\Fonts\*.otf" />
+
+    <None Update="Assets\Fonts\OFL.txt" Link="licenses\Inter-OFL.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\LICENSE" Link="licenses\LICENSE.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\THIRD-PARTY-NOTICES.md" Link="licenses\THIRD-PARTY-NOTICES.md" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="OpenLauncher.Tests" />
+  </ItemGroup>
+
+</Project>

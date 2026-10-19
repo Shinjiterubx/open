@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openNotes", "openNotes", "{A1000000-0000-4000-8000-000000000001}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenNotes", "openNotes\src\OpenNotes\OpenNotes.csproj", "{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenNotes.Tests", "openNotes\tests\OpenNotes.Tests\OpenNotes.Tests.csproj", "{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openCalendar", "openCalendar", "{A1000000-0000-4000-8000-000000000002}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenCalendar", "openCalendar\src\OpenCalendar\OpenCalendar.csproj", "{2C4E6A81-5B3D-4F72-9E1A-6D8B0C2F4A13}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenCalendar.Tests", "openCalendar\tests\OpenCalendar.Tests\OpenCalendar.Tests.csproj", "{3D5F7B92-6C4E-4083-AF2B-7E9C1D3A5B24}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openKanban", "openKanban", "{A1000000-0000-4000-8000-000000000003}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenKanban", "openKanban\src\OpenKanban\OpenKanban.csproj", "{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenKanban.Tests", "openKanban\tests\OpenKanban.Tests\OpenKanban.Tests.csproj", "{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "openLauncher", "openLauncher", "{A1000000-0000-4000-8000-000000000004}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenLauncher", "openLauncher\src\OpenLauncher\OpenLauncher.csproj", "{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenLauncher.Tests", "openLauncher\tests\OpenLauncher.Tests\OpenLauncher.Tests.csproj", "{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C4E6A81-5B3D-4F72-9E1A-6D8B0C2F4A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C4E6A81-5B3D-4F72-9E1A-6D8B0C2F4A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C4E6A81-5B3D-4F72-9E1A-6D8B0C2F4A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C4E6A81-5B3D-4F72-9E1A-6D8B0C2F4A13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D5F7B92-6C4E-4083-AF2B-7E9C1D3A5B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D5F7B92-6C4E-4083-AF2B-7E9C1D3A5B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D5F7B92-6C4E-4083-AF2B-7E9C1D3A5B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D5F7B92-6C4E-4083-AF2B-7E9C1D3A5B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80} = {A1000000-0000-4000-8000-000000000001}
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091} = {A1000000-0000-4000-8000-000000000001}
+		{2C4E6A81-5B3D-4F72-9E1A-6D8B0C2F4A13} = {A1000000-0000-4000-8000-000000000002}
+		{3D5F7B92-6C4E-4083-AF2B-7E9C1D3A5B24} = {A1000000-0000-4000-8000-000000000002}
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57} = {A1000000-0000-4000-8000-000000000003}
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68} = {A1000000-0000-4000-8000-000000000003}
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61} = {A1000000-0000-4000-8000-000000000004}
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72} = {A1000000-0000-4000-8000-000000000004}
+	EndGlobalSection
+EndGlobal

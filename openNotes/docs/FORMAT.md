@@ -1,0 +1,69 @@
+# The `.openNote` file format (v1)
+
+An `.openNote` file is a standard **ZIP archive**, so it can be opened with any unzip tool
+and processed by other programs without openNotes.
+
+```
+note.openNote
+├── manifest.json     metadata
+├── content.md        the note body (UTF-8 Markdown, no BOM)
+└── assets/           embedded files referenced from content.md
+    ├── screenshot.png
+    └── diagram.svg
+```
+
+## manifest.json
+
+```json
+{
+  "format": "openNote",
+  "version": 1,
+  "id": "4f0c8a2e-5d1b-4a7e-9c55-2b8f3e6d1a90",
+  "title": "Bevásárlólista",
+  "createdAt": "2026-10-13T09:12:44+02:00",
+  "updatedAt": "2026-10-13T09:30:02+02:00",
+  "isPinned": false,
+  "generator": "openNotes 1.0.0",
+  "priority": "high",
+  "dueDate": "2026-10-20",
+  "dueTime": "14:00:00",
+  "reminder": true,
+  "isDone": false
+}
+```
+
+| Field | Type | Notes |
+|---|---|---|
+| `format` | string | Always `"openNote"`. |
+| `version` | int | Format version. Readers reject files with a higher version than they know. |
+| `id` | GUID | Stable identity. Importing a file whose `id` already exists asks to overwrite or copy. |
+| `title` | string | May be empty. |
+| `createdAt` / `updatedAt` | ISO 8601 with offset | |
+| `isPinned` | bool | Pinned notes are listed first. |
+| `generator` | string | Informational. |
+| `priority` | `"low"` \| `"medium"` \| `"high"` | Optional. Shown as purple / yellow / red. Missing = none. |
+| `dueDate` | `yyyy-MM-dd` | Optional deadline (local date). |
+| `dueTime` | `HH:mm:ss` | Optional; without it the note is due at the end of `dueDate`. |
+| `reminder` | bool | Optional. Remind daily until done or switched off. |
+| `isDone` | bool | Optional. Done notes don't remind. |
+
+## content.md
+
+CommonMark + GitHub-style extensions (tables, task lists `- [ ]` / `- [x]`, strikethrough `~~x~~`,
+autolinks). Images are referenced relative to the archive root:
+
+```markdown
+![Képernyőkép](assets/screenshot.png)
+```
+
+Raw HTML is **not rendered** by openNotes (security: notes are shared between people).
+
+## assets/
+
+Flat folder. File names are restricted to `A–Z a–z 0–9 _ -` plus a lowercase extension,
+so they are safe as paths and URLs. Identical content is stored once.
+
+## Compatibility rules
+
+* New optional manifest fields may be added without bumping `version`; readers ignore unknown fields.
+* Changing the meaning of existing fields or the layout bumps `version`.

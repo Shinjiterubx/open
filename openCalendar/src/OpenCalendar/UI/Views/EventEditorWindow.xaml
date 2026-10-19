@@ -1,0 +1,262 @@
+<Window x:Class="OpenCalendar.UI.Views.EventEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:OpenCalendar.UI.Controls"
+        xmlns:models="clr-namespace:OpenCalendar.Core.Models"
+        Title="{Binding WindowTitle}"
+        Width="640" Height="780" MinWidth="560" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Icon="/Assets/openCalendar.ico"
+        FontFamily="{StaticResource UiFont}"
+        Foreground="{StaticResource InkBrush}"
+        Background="{StaticResource SurfaceBrush}"
+        UseLayoutRounding="True">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="56" ResizeBorderThickness="6" GlassFrameThickness="0,0,0,1"
+                      CornerRadius="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <Window.InputBindings>
+        <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}" />
+        <KeyBinding Gesture="Ctrl+Enter" Command="{Binding SaveCommand}" />
+        <KeyBinding Key="Escape" Command="{Binding CancelCommand}" />
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Margin="26,0,0,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Width="30" Height="30" CornerRadius="9" Background="{StaticResource AccentSoftBrush}" Margin="0,0,10,0">
+                    <TextBlock Text="&#xE787;" Style="{StaticResource IconGlyph}" FontSize="14" Foreground="{StaticResource AccentBrush}" />
+                </Border>
+                <TextBlock Text="{Binding WindowTitle}" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" />
+            </StackPanel>
+            <Button Style="{StaticResource CaptionCloseButton}" Content="&#xE8BB;" HorizontalAlignment="Right" VerticalAlignment="Top" Height="40"
+                    WindowChrome.IsHitTestVisibleInChrome="True" Command="{Binding CancelCommand}" ToolTip="Bezárás (Esc)" />
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="26,4,26,16">
+            <StackPanel>
+                <!-- Title + calendar -->
+                <TextBox x:Name="TitleInput" Style="{StaticResource TitleBox}" FontSize="23" Tag="Esemény neve"
+                         Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,16" />
+
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Naptár" Style="{StaticResource FieldLabel}" />
+                        <ComboBox ItemsSource="{Binding Calendars}" SelectedItem="{Binding SelectedCalendar}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Width="10" Height="10" Margin="0,0,9,0" VerticalAlignment="Center"
+                                                 Fill="{Binding Color, Converter={StaticResource HexToBrush}}" />
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <CheckBox Grid.Column="2" Style="{StaticResource ToggleSwitch}" IsChecked="{Binding IsAllDay}" VerticalAlignment="Bottom" Margin="0,0,0,7">
+                        <TextBlock Text="Egész napos" FontWeight="Medium" />
+                    </CheckBox>
+                </Grid>
+
+                <!-- Time -->
+                <Grid Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="96" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Kezdés" Style="{StaticResource FieldLabel}" />
+                    <controls:DateField Grid.Row="1" SelectedDate="{Binding StartDate}" />
+                    <TextBox Grid.Row="1" Grid.Column="2" Style="{StaticResource InputBox}" Tag="óó:pp" TextAlignment="Center"
+                             Text="{Binding StartTimeText, UpdateSourceTrigger=LostFocus}"
+                             Visibility="{Binding IsAllDay, Converter={StaticResource InverseBoolToVis}}" />
+                    <TextBlock Grid.Row="3" Text="Befejezés" Style="{StaticResource FieldLabel}" />
+                    <controls:DateField Grid.Row="4" SelectedDate="{Binding EndDate}" />
+                    <TextBox Grid.Row="4" Grid.Column="2" Style="{StaticResource InputBox}" Tag="óó:pp" TextAlignment="Center"
+                             Text="{Binding EndTimeText, UpdateSourceTrigger=LostFocus}"
+                             Visibility="{Binding IsAllDay, Converter={StaticResource InverseBoolToVis}}" />
+                </Grid>
+
+                <TextBlock Text="Helyszín" Style="{StaticResource FieldLabel}" />
+                <TextBox Style="{StaticResource InputBox}" Tag="pl. Tárgyaló 2 / Teams" Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,18" />
+
+                <!-- Recurrence -->
+                <Border Style="{StaticResource Card}" Padding="18,14">
+                    <StackPanel>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE8EE;" Style="{StaticResource IconGlyph}" Foreground="{StaticResource AccentBrush}" Margin="0,0,9,0" />
+                                <TextBlock Text="Ismétlődés" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ComboBox Width="190" HorizontalAlignment="Right" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding Frequency}"
+                                      DisplayMemberPath="Label" />
+                        </Grid>
+
+                        <StackPanel Visibility="{Binding IsRecurring, Converter={StaticResource BoolToVis}}" Margin="0,14,0,0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                <TextBlock Text="Ismétlés:" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="{StaticResource InkSecondaryBrush}" />
+                                <TextBox Style="{StaticResource InputBox}" Width="56" TextAlignment="Center"
+                                         Text="{Binding IntervalText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Minden hányadik nap / hét / hónap / év" />
+                                <TextBlock Text="{Binding IntervalUnit}" VerticalAlignment="Center" Margin="10,0,0,0" FontWeight="Medium" />
+                            </StackPanel>
+
+                            <ItemsControl ItemsSource="{Binding Weekdays}" Margin="0,0,0,12"
+                                          Visibility="{Binding IsWeekly, Converter={StaticResource BoolToVis}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <ToggleButton Style="{StaticResource DayToggle}" Content="{Binding Label}" IsChecked="{Binding IsChecked}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <TextBlock Text="Vége" Style="{StaticResource FieldLabel}" />
+                            <RadioButton Style="{StaticResource RadioOption}" GroupName="End" Content="Soha"
+                                         IsChecked="{Binding EndKind, Converter={StaticResource EnumEquals}, ConverterParameter={x:Static models:RecurrenceEnd.Never}}" />
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <RadioButton Style="{StaticResource RadioOption}" GroupName="End" Content="Dátum:" Margin="0"
+                                             IsChecked="{Binding EndKind, Converter={StaticResource EnumEquals}, ConverterParameter={x:Static models:RecurrenceEnd.OnDate}}" />
+                                <controls:DateField Grid.Column="1" SelectedDate="{Binding UntilDate}" Placeholder="Utolsó nap" />
+                            </Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Style="{StaticResource RadioOption}" GroupName="End" Content="" Margin="0" Width="28"
+                                             IsChecked="{Binding EndKind, Converter={StaticResource EnumEquals}, ConverterParameter={x:Static models:RecurrenceEnd.AfterCount}}" />
+                                <TextBox Style="{StaticResource InputBox}" Width="64" TextAlignment="Center" Text="{Binding CountText, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="alkalom után" VerticalAlignment="Center" Margin="10,0,0,0" />
+                            </StackPanel>
+
+                            <Border Background="{StaticResource AccentSofterBrush}" CornerRadius="8" Padding="12,8" Margin="0,14,0,0">
+                                <TextBlock Text="{Binding RecurrenceSummary}" FontWeight="Medium" Foreground="{StaticResource AccentBrush}" TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
+
+                        <Border Background="{StaticResource SurfaceSunkenBrush}" CornerRadius="8" Padding="12,8" Margin="0,12,0,0"
+                                Visibility="{Binding IsExistingRecurring, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{Binding SeriesInfoText}" Style="{StaticResource CaptionText}" FontSize="12" TextWrapping="Wrap" />
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <!-- Reminders -->
+                <Border Style="{StaticResource Card}" Padding="18,14">
+                    <StackPanel>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="&#xEA8F;" Style="{StaticResource IconGlyph}" Foreground="{StaticResource AccentBrush}" Margin="0,0,9,0" />
+                                <TextBlock Text="Emlékeztetők" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ComboBox Width="190" HorizontalAlignment="Right" ItemsSource="{Binding ReminderPresets}" SelectedItem="{Binding ReminderToAdd}"
+                                      DisplayMemberPath="Label" ToolTip="Emlékeztető hozzáadása" />
+                            <TextBlock Text="+ Hozzáadás" IsHitTestVisible="False" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,44,0"
+                                       Foreground="{StaticResource InkMutedBrush}"
+                                       Visibility="{Binding ReminderToAdd, Converter={StaticResource NullToVis}}" />
+                        </Grid>
+                        <ItemsControl ItemsSource="{Binding Reminders}" Margin="0,12,0,0"
+                                      Visibility="{Binding HasReminders, Converter={StaticResource BoolToVis}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="{StaticResource AccentSoftBrush}" CornerRadius="14" Padding="12,5,6,5" Margin="0,0,6,6">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Label}" FontSize="12.5" FontWeight="Medium" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center" />
+                                            <Button Style="{StaticResource IconButton}" Width="22" Height="22" FontSize="9" Content="&#xE711;" Margin="6,0,0,0"
+                                                    Command="{Binding DataContext.RemoveReminderCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}" ToolTip="Eltávolítás" />
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Text="Minden alkalom előtt szól (ismétlődő eseménynél naponta / hetente is)." Style="{StaticResource CaptionText}"
+                                   Margin="0,8,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Linked note -->
+                <Border Style="{StaticResource Card}" Padding="18,14">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <TextBlock Text="&#xE70B;" Style="{StaticResource IconGlyph}" Foreground="{StaticResource OpenNotesBrush}" Margin="0,0,9,0" />
+                            <TextBlock Text="Kapcsolt jegyzet (openNotes)" FontSize="13.5" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <Grid Visibility="{Binding IsNoteSyncAvailable, Converter={StaticResource BoolToVis}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox ItemsSource="{Binding NoteChoices}" SelectedItem="{Binding SelectedNote}" DisplayMemberPath="Title"
+                                      IsTextSearchEnabled="True" TextSearch.TextPath="Title" MaxDropDownHeight="320" />
+                            <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0" Padding="12,7"
+                                    Command="{Binding OpenNoteCommand}" IsEnabled="{Binding HasLinkedNote}" ToolTip="Megnyitás az openNotes-ban">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8A7;" Style="{StaticResource IconGlyph}" FontSize="12" Margin="0,0,7,0" />
+                                    <TextBlock Text="Megnyitás" />
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="2" Style="{StaticResource IconButton}" Content="&#xE711;" Margin="4,0,0,0"
+                                    Command="{Binding ClearNoteCommand}" IsEnabled="{Binding HasLinkedNote}" ToolTip="Leválasztás" />
+                        </Grid>
+                        <TextBlock Text="Nem található openNotes jegyzet. Telepítsd és indítsd el az openNotes-t, vagy add meg a mappáját a Beállításokban."
+                                   Style="{StaticResource CaptionText}" TextWrapping="Wrap"
+                                   Visibility="{Binding IsNoteSyncAvailable, Converter={StaticResource InverseBoolToVis}}" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Leírás" Style="{StaticResource FieldLabel}" />
+                <TextBox Style="{StaticResource TextArea}" Tag="Megjegyzés, napirend, linkek…" Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="26,14">
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                    <Button Style="{StaticResource GhostButton}" Tag="&#xE74D;" Content="Törlés" Foreground="{StaticResource DangerBrush}" Margin="-10,0,12,0"
+                            Command="{Binding DeleteCommand}" Visibility="{Binding IsNew, Converter={StaticResource InverseBoolToVis}}" />
+                    <TextBlock Text="{Binding ErrorText}" Foreground="{StaticResource DangerBrush}" FontSize="12.5" TextWrapping="Wrap"
+                               VerticalAlignment="Center" MaxWidth="260" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource SecondaryButton}" Content="Mégse" Margin="0,0,10,0" Command="{Binding CancelCommand}" />
+                    <Button Style="{StaticResource PrimaryButton}" Content="Mentés" Command="{Binding SaveCommand}" ToolTip="Ctrl+S" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

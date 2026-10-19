@@ -1,0 +1,175 @@
+<Window x:Class="OpenCalendar.UI.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Beállítások – openCalendar"
+        Width="620" Height="760" MinWidth="540" MinHeight="480"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Icon="/Assets/openCalendar.ico"
+        FontFamily="{StaticResource UiFont}"
+        Foreground="{StaticResource InkBrush}"
+        Background="{StaticResource SurfaceAltBrush}"
+        UseLayoutRounding="True">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="56" ResizeBorderThickness="6" GlassFrameThickness="0,0,0,1"
+                      CornerRadius="0" UseAeroCaptionButtons="False" />
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="56" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="26,0,0,0">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="&#xE713;" Style="{StaticResource IconGlyph}" FontSize="16" Foreground="{StaticResource AccentBrush}" Margin="0,0,10,0" />
+                <TextBlock Text="Beállítások" FontSize="18" FontWeight="Bold" />
+            </StackPanel>
+            <Button Style="{StaticResource CaptionCloseButton}" Content="&#xE8BB;" HorizontalAlignment="Right" Height="40" VerticalAlignment="Top"
+                    WindowChrome.IsHitTestVisibleInChrome="True" Click="OnCancelClick" ToolTip="Bezárás (Esc)" />
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="26,4,26,10">
+            <StackPanel>
+                <!-- General -->
+                <TextBlock Text="ÁLTALÁNOS" Style="{StaticResource SectionLabel}" Margin="2,6,0,8" />
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding StartWithWindows}" Margin="0,2,0,14">
+                            <StackPanel>
+                                <TextBlock Text="Indítás a Windows-zal" FontWeight="Medium" />
+                                <TextBlock Text="Ajánlott, hogy az emlékeztetők akkor is szóljanak, ha nem nyitod meg a naptárat"
+                                           Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding StartMinimized}" Margin="0,0,0,14">
+                            <StackPanel>
+                                <TextBlock Text="Indítás a háttérben" FontWeight="Medium" />
+                                <TextBlock Text="Csak a tálcaikon jelenik meg induláskor" Style="{StaticResource CaptionText}" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding CloseToTray}" Margin="0,0,0,2">
+                            <StackPanel>
+                                <TextBlock Text="Bezáráskor a tálcára" FontWeight="Medium" />
+                                <TextBlock Text="A bezárás gomb csak elrejti az ablakot; kilépés a tálcaikonról" Style="{StaticResource CaptionText}" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- Calendar -->
+                <TextBlock Text="NAPTÁR" Style="{StaticResource SectionLabel}" Margin="2,6,0,8" />
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Munkaidő (kiemelve a heti nézetben)" FontSize="13.5" FontWeight="Medium" VerticalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBox Style="{StaticResource InputBox}" Width="70" TextAlignment="Center" Text="{Binding WorkdayStartText, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Text="–" VerticalAlignment="Center" Margin="8,0" />
+                                <TextBox Style="{StaticResource InputBox}" Width="70" TextAlignment="Center" Text="{Binding WorkdayEndText, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Új esemény alapértelmezett hossza (perc)" FontSize="13.5" FontWeight="Medium" VerticalAlignment="Center" />
+                            <TextBox Style="{StaticResource InputBox}" Width="70" TextAlignment="Center" HorizontalAlignment="Right"
+                                     Text="{Binding DefaultDurationText, UpdateSourceTrigger=PropertyChanged}" />
+                        </Grid>
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Alapértelmezett emlékeztető" FontSize="13.5" FontWeight="Medium" VerticalAlignment="Center" />
+                            <ComboBox Width="200" HorizontalAlignment="Right" ItemsSource="{Binding ReminderOptions}"
+                                      SelectedItem="{Binding DefaultReminder}" DisplayMemberPath="Label" />
+                        </Grid>
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding PlayReminderSound}">
+                            <TextBlock Text="Hangjelzés emlékeztetőkor" FontWeight="Medium" />
+                        </CheckBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- openNotes -->
+                <TextBlock Text="OPENNOTES INTEGRÁCIÓ" Style="{StaticResource SectionLabel}" Margin="2,6,0,8" />
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding OpenNotesSyncEnabled}" Margin="0,2,0,14">
+                            <StackPanel>
+                                <TextBlock Text="Szinkron az openNotes-szal" FontWeight="Medium" />
+                                <TextBlock Text="A jegyzetekhez beállított határidők automatikusan megjelennek a naptárban, és eseményhez jegyzet kapcsolható"
+                                           Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </CheckBox>
+                        <StackPanel IsEnabled="{Binding OpenNotesSyncEnabled}">
+                            <TextBlock Text="Jegyzetek mappája (üresen hagyva automatikus)" Style="{StaticResource FieldLabel}" />
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Style="{StaticResource InputBox}" Tag="Automatikus" Text="{Binding OpenNotesFolder, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Tallózás…" Margin="8,0,0,0" Command="{Binding BrowseNotesFolderCommand}" />
+                            </Grid>
+                            <TextBlock Text="{Binding DetectedNotesFolderText}" Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,0,0,14" />
+                            <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding ShowDoneNotes}" Margin="0,0,0,12">
+                                <TextBlock Text="Kész jegyzetek mutatása (áthúzva)" FontWeight="Medium" />
+                            </CheckBox>
+                            <Grid>
+                                <TextBlock Text="Emlékeztető időponthoz kötött jegyzet-határidőkre" FontSize="13.5" FontWeight="Medium" VerticalAlignment="Center"
+                                           TextWrapping="Wrap" Margin="0,0,210,0" />
+                                <ComboBox Width="200" HorizontalAlignment="Right" ItemsSource="{Binding ReminderOptions}"
+                                          SelectedItem="{Binding NoteReminder}" DisplayMemberPath="Label" />
+                            </Grid>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- openKanban -->
+                <TextBlock Text="OPENKANBAN INTEGRÁCIÓ" Style="{StaticResource SectionLabel}" Margin="2,6,0,8" />
+                <Border Style="{StaticResource Card}">
+                    <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding KanbanSyncEnabled}">
+                        <StackPanel>
+                            <TextBlock Text="Kártya határidők megjelenítése" FontWeight="Medium" />
+                            <TextBlock Text="Az openKanban határidős kártyái automatikusan megjelennek; kattintásra a kártya megnyílik az openKanban-ban"
+                                       Style="{StaticResource CaptionText}" TextWrapping="Wrap" Margin="0,2,0,0" />
+                        </StackPanel>
+                    </CheckBox>
+                </Border>
+
+                <!-- Storage -->
+                <TextBlock Text="TÁRHELY" Style="{StaticResource SectionLabel}" Margin="2,6,0,8" />
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="A naptárak .opencalendar fájlként, ebben a mappában vannak:" Foreground="{StaticResource InkSecondaryBrush}" FontSize="12.5" />
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border Background="{StaticResource SurfaceSunkenBrush}" CornerRadius="8" Padding="10,8" Margin="0,0,10,0">
+                                <TextBlock Text="{Binding CalendarsDirectory}" FontFamily="Cascadia Mono, Consolas" FontSize="12" TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding CalendarsDirectory}" />
+                            </Border>
+                            <Button Grid.Column="1" Style="{StaticResource SecondaryButton}" Content="Megnyitás" Command="{Binding OpenCalendarsFolderCommand}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,6">
+                    <Image Source="/Assets/icon.png" Width="22" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,8,0" />
+                    <TextBlock Text="{Binding VersionText}" Style="{StaticResource CaptionText}" VerticalAlignment="Center" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="26,14">
+            <Grid>
+                <TextBlock Text="{Binding ErrorText}" Foreground="{StaticResource DangerBrush}" TextWrapping="Wrap" VerticalAlignment="Center"
+                           FontSize="12.5" Margin="0,0,16,0" MaxWidth="320" HorizontalAlignment="Left" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource SecondaryButton}" Content="Mégse" Margin="0,0,10,0" Click="OnCancelClick" />
+                    <Button Style="{StaticResource PrimaryButton}" Content="Mentés" IsDefault="True" Click="OnSaveClick" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

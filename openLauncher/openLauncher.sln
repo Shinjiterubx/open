@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenLauncher", "src\OpenLauncher\OpenLauncher.csproj", "{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenLauncher.Tests", "tests\OpenLauncher.Tests\OpenLauncher.Tests.csproj", "{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A1B3C5D-2E4F-4A6B-8C9D-0E1F2A3B4C61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B2C4D6E-3F5A-4B7C-9D0E-1F2A3B4C5D72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

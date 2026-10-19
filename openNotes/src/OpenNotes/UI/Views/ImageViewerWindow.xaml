@@ -1,0 +1,57 @@
+<Window x:Class="OpenNotes.UI.Views.ImageViewerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Kép – openNotes"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="#E8140A24"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStartupLocation="Manual"
+        FontFamily="{StaticResource UiFont}"
+        UseLayoutRounding="True">
+    <Grid>
+        <!-- Stage: click on the backdrop closes, wheel zooms, drag pans -->
+        <Grid x:Name="Stage" Background="Transparent" ClipToBounds="True">
+            <Image x:Name="Picture" Stretch="Uniform" Margin="64,72,64,72" RenderTransformOrigin="0,0"
+                   RenderOptions.BitmapScalingMode="HighQuality" Cursor="SizeAll">
+                <Image.Effect>
+                    <DropShadowEffect BlurRadius="40" ShadowDepth="8" Direction="270" Opacity="0.45" Color="#000000" />
+                </Image.Effect>
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform x:Name="Zoom" ScaleX="1" ScaleY="1" />
+                        <TranslateTransform x:Name="Pan" X="0" Y="0" />
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+        </Grid>
+
+        <!-- Top bar -->
+        <Border VerticalAlignment="Top" Padding="20,14" Background="#66000000">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="/Assets/icon.png" Width="22" Height="22" RenderOptions.BitmapScalingMode="HighQuality" Margin="0,0,10,0" />
+                    <TextBlock x:Name="FileNameText" Foreground="White" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                    <TextBlock x:Name="InfoText" Foreground="#B9ACD0" FontSize="12.5" Margin="12,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource ViewerButton}" Content="&#xE71F;" ToolTip="Kicsinyítés  (−)" Click="OnZoomOut" />
+                    <Button x:Name="ZoomLabel" Style="{StaticResource ViewerButton}" Width="64" FontFamily="{StaticResource UiFont}" FontSize="12.5"
+                            ToolTip="Ablakhoz igazítás  (0 / dupla kattintás)" Click="OnResetZoom" />
+                    <Button Style="{StaticResource ViewerButton}" Content="&#xE8A3;" ToolTip="Nagyítás  (+)" Click="OnZoomIn" />
+                    <Rectangle Width="1" Height="20" Fill="#40FFFFFF" Margin="8,0" />
+                    <Button Style="{StaticResource ViewerButton}" Content="&#xE8C8;" ToolTip="Másolás a vágólapra  (Ctrl+C)" Click="OnCopy" />
+                    <Button Style="{StaticResource ViewerButton}" Content="&#xE74E;" ToolTip="Mentés fájlba…  (Ctrl+S)" Click="OnSave" />
+                    <Rectangle Width="1" Height="20" Fill="#40FFFFFF" Margin="8,0" />
+                    <Button Style="{StaticResource ViewerButton}" Content="&#xE8BB;" ToolTip="Bezárás  (Esc)" Click="OnClose" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <TextBlock Text="Görgő: nagyítás  ·  Húzás: mozgatás  ·  Dupla kattintás: igazítás  ·  Esc: bezárás"
+                   Foreground="#9A8FB0" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,22" />
+    </Grid>
+</Window>

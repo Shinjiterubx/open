@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; img-src https: data:; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'unsafe-inline';">
+  <title>openNotes preview</title>
+  <link rel="stylesheet" href="preview.css">
+</head>
+<body>
+  <main id="doc" class="doc"></main>
+  <script>
+    (function () {
+      'use strict';
+      var doc = document.getElementById('doc');
+      var host = window.chrome && window.chrome.webview;
+      var post = function (message) { if (host) host.postMessage(message); };
+
+      function bindTasks() {
+        var boxes = doc.querySelectorAll('input[type="checkbox"]');
+        boxes.forEach(function (box, index) {
+          box.removeAttribute('disabled');
+          var item = box.closest('li');
+          if (item) {
+            item.classList.add('task');
+            item.classList.toggle('done', box.checked);
+          }
+          box.addEventListener('click', function (event) {
+            event.preventDefault();
+            post({ type: 'toggleTask', index: index });
+          });
+        });
+      }
+
+      function bindImages() {
+        doc.querySelectorAll('img').forEach(function (img) {
+          img.addEventListener('click', function () {
+            post({ type: 'openImage', src: img.getAttribute('src') });
+          });
+        });
+      }
+
+      function wrapTables() {
+        doc.querySelectorAll('table').forEach(function (table) {
+          if (table.parentElement && table.parentElement.classList.contains('table-wrap')) return;
+          var wrap = document.createElement('div');
+          wrap.className = 'table-wrap';
+          table.parentNode.insertBefore(wrap, table);
+          wrap.appendChild(table);
+        });
+      }
+
+      window.openNotes = {
+        render: function (html) {
+          var scrollTop = document.scrollingElement.scrollTop;
+          if (html && html.trim().length) {
+            doc.innerHTML = html;
+            doc.classList.remove('is-empty');
+          } else {
+            doc.innerHTML = '<p class="empty">Az előnézet itt jelenik meg, amint írni kezdesz.</p>';
+            doc.classList.add('is-empty');
+          }
+          bindTasks();
+          bindImages();
+          wrapTables();
+          document.scrollingElement.scrollTop = scrollTop;
+        },
+        setFontSize: function (px) {
+          document.documentElement.style.setProperty('--font-size', px + 'px');
+        },
+        setCompact: function (compact) {
+          document.body.classList.toggle('compact', !!compact);
+        }
+      };
+
+      post({ type: 'ready' });
+    })();
+  </script>
+</body>
+</html>

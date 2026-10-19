@@ -1,0 +1,36 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenNotes", "src\OpenNotes\OpenNotes.csproj", "{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenNotes.Tests", "tests\OpenNotes.Tests\OpenNotes.Tests.csproj", "{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B3A4D56-AE7C-4F90-BD43-5C6E7F8091A2}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+		LICENSE = LICENSE
+		installer\openNotes.iss = installer\openNotes.iss
+		build\publish.ps1 = build\publish.ps1
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F1E2B34-8C5A-4D7E-9B21-3A4C5D6E7F80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A2F3C45-9D6B-4E8F-AC32-4B5D6E7F8091}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

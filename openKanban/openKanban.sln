@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenKanban", "src\OpenKanban\OpenKanban.csproj", "{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenKanban.Tests", "tests\OpenKanban.Tests\OpenKanban.Tests.csproj", "{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E7A9C13-8D6F-4A24-B1C3-9E0F2A4B6C57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F8BAD24-9E7A-4B35-C2D4-AF103B5C7D68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

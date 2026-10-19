@@ -1,0 +1,58 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Palette taken from the logo: warm dark-brown ink on white, with the copper / orange accent. -->
+    <Color x:Key="InkColor">#2A1A10</Color>
+    <Color x:Key="InkSecondaryColor">#5E4A3E</Color>
+    <Color x:Key="InkMutedColor">#9A8A80</Color>
+    <Color x:Key="AccentColor">#D2691E</Color>
+    <Color x:Key="AccentHoverColor">#B85A16</Color>
+    <Color x:Key="AccentPressedColor">#9E4C12</Color>
+    <Color x:Key="AccentSoftColor">#FDEEDF</Color>
+    <Color x:Key="AccentSofterColor">#FEF7EF</Color>
+    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="SurfaceAltColor">#FDFAF7</Color>
+    <Color x:Key="SurfaceSunkenColor">#F7F0EA</Color>
+    <Color x:Key="BorderColor">#F0E5DB</Color>
+    <Color x:Key="BorderStrongColor">#E5D2C2</Color>
+    <Color x:Key="DangerColor">#C42B4B</Color>
+    <Color x:Key="DangerSoftColor">#FCEBEF</Color>
+    <Color x:Key="ShadowColor">#4A2A12</Color>
+
+    <SolidColorBrush x:Key="InkBrush" Color="{StaticResource InkColor}" />
+    <SolidColorBrush x:Key="InkSecondaryBrush" Color="{StaticResource InkSecondaryColor}" />
+    <SolidColorBrush x:Key="InkMutedBrush" Color="{StaticResource InkMutedColor}" />
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressedColor}" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="{StaticResource AccentSoftColor}" />
+    <SolidColorBrush x:Key="AccentSofterBrush" Color="{StaticResource AccentSofterColor}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="SurfaceAltBrush" Color="{StaticResource SurfaceAltColor}" />
+    <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="{StaticResource SurfaceSunkenColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="BorderStrongBrush" Color="{StaticResource BorderStrongColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="DangerSoftBrush" Color="{StaticResource DangerSoftColor}" />
+    <!-- Integration colours (openNotes violet, openCalendar pink) and status colours -->
+    <SolidColorBrush x:Key="OpenCalendarBrush" Color="#D45D79" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="#2E8B57" />
+    <SolidColorBrush x:Key="SuccessSoftBrush" Color="#E5F4EC" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#C77D0A" />
+    <SolidColorBrush x:Key="WarningSoftBrush" Color="#FDF1DC" />
+    <SolidColorBrush x:Key="OpenNotesBrush" Color="#5B3E96" />
+    <SolidColorBrush x:Key="PriorityHighBrush" Color="#E0434F" />
+    <SolidColorBrush x:Key="PriorityMediumBrush" Color="#F0B429" />
+    <SolidColorBrush x:Key="PriorityLowBrush" Color="#8B6BD6" />
+    <SolidColorBrush x:Key="NowLineBrush" Color="#E0434F" />
+    <SolidColorBrush x:Key="ScrollThumbBrush" Color="#EAD3BF" />
+    <SolidColorBrush x:Key="ScrollThumbHoverBrush" Color="#DDB596" />
+
+    <!-- Inter (SIL OFL 1.1) is embedded; Segoe UI is the fallback. -->
+    <FontFamily x:Key="UiFont">pack://application:,,,/Assets/Fonts/#Inter, Segoe UI Variable Text, Segoe UI</FontFamily>
+    <!-- Icon glyphs ship with Windows 10 (MDL2) and Windows 11 (Fluent). -->
+    <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+    <DropShadowEffect x:Key="CardShadow" Color="{StaticResource ShadowColor}" BlurRadius="24" ShadowDepth="6" Direction="270" Opacity="0.14" />
+    <DropShadowEffect x:Key="SoftShadow" Color="{StaticResource ShadowColor}" BlurRadius="8" ShadowDepth="1" Direction="270" Opacity="0.10" />
+</ResourceDictionary>
