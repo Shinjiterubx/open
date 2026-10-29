@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OpenNotes.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+345ae88cbe1deb0d2d4f211a933d592dfd06f4a3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+03f2cc96e4a8040185a5417e57ff8888c6724a80")]
 [assembly: System.Reflection.AssemblyProductAttribute("OpenNotes.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OpenNotes.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

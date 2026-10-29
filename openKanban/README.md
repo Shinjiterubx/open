@@ -3,8 +3,8 @@
 <h1 align="center">openKanban</h1>
 
 <p align="center">
-  Nyílt forráskódú Kanban-táblák Windowsra – helyi tárolással, openNotes és openCalendar kapcsolattal.<br/>
-  <sub>Open source Kanban boards for Windows. Local storage, MIT licensed.</sub>
+  Trello-szerű, nyílt forráskódú Kanban-táblák Windowsra – helyi tárolással, openNotes és openCalendar kapcsolattal.<br/>
+  <sub>Open source Trello-like Kanban boards for Windows. Local storage, MIT licensed.</sub>
 </p>
 
 ---

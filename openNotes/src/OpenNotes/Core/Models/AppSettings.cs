@@ -53,6 +53,7 @@ public sealed class AppSettings
     public TimeOnly DailySummaryTime { get; set; } = new(9, 0);
     public DateOnly? LastDailySummaryDate { get; set; }
     public bool ReminderPanelExpanded { get; set; } = true;
+    public bool FolderPanelExpanded { get; set; } = true;
 
     public WindowBounds? MainWindowBounds { get; set; }
     public WindowBounds? MiniWindowBounds { get; set; }

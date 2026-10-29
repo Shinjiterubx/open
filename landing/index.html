@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>open* – jegyzet, naptár és Kanban Windowsra</title>
+  <meta name="description" content="Négy nyílt forráskódú Windows-alkalmazás, amelyek tudnak egymásról: openNotes, openCalendar, openKanban és openLauncher. Helyi adatok, MIT licenc." />
+  <meta name="theme-color" content="#ffffff" />
+  <meta property="og:title" content="open* – jegyzet, naptár és Kanban Windowsra" />
+  <meta property="og:description" content="Négy nyílt forráskódú Windows-alkalmazás, amelyek tudnak egymásról. Helyi adatok, MIT licenc." />
+  <meta property="og:image" content="assets/icons/openLauncher.png" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script>
+    // Hide the hero copy until its entrance animation starts (failsafe: shown after 2.5 s anyway).
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      document.documentElement.classList.add("intro");
+      setTimeout(() => document.documentElement.classList.remove("intro"), 2500);
+    }
+  </script>
+
+</head>
+<body>
+  <a class="skip" href="#main">Ugrás a tartalomra</a>
+
+  <header class="topbar" id="top">
+    <a class="wordmark" href="#top" aria-label="open* – kezdőlap">
+      <span>open</span><svg class="star" viewBox="0 0 24 24" aria-hidden="true">
+        <line x1="12" y1="2" x2="12" y2="22" stroke="#5B3E96" />
+        <line x1="3.3" y1="7" x2="20.7" y2="17" stroke="#D45D79" />
+        <line x1="3.3" y1="17" x2="20.7" y2="7" stroke="#2F5A8A" />
+        <circle cx="12" cy="12" r="2.6" fill="#D2691E" />
+      </svg>
+    </a>
+    <nav class="nav" aria-label="Fő navigáció">
+      <a href="#notes">Jegyzetek</a>
+      <a href="#calendar">Naptár</a>
+      <a href="#kanban">Kanban</a>
+      <a href="#launcher">Launcher</a>
+      <a class="nav-cta" href="#download">Letöltés</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ═══════════ Hero ═══════════ -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <h1 id="hero-title" class="hero-title">
+          <span class="line">Négy kis alkalmazás,</span>
+          <span class="line">amelyek tudnak</span>
+          <span class="line">egymásról.</span>
+        </h1>
+        <p class="hero-lead">
+          Markdown jegyzetek, naptár és Kanban-táblák Windowsra. Az adataid a gépeden maradnak,
+          a határidők pedig maguktól átjutnak egyik alkalmazásból a másikba.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" data-link="release" href="#download">Letöltés Windowsra</a>
+          <a class="btn btn-quiet" data-link="repo" href="#">Forráskód a GitHubon</a>
+        </div>
+        <p class="hero-meta">Ingyenes és nyílt forráskódú (MIT). Windows 10 és 11. Nincs fiók, nincs felhő.</p>
+      </div>
+
+      <div class="hero-stage">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <ul class="hero-legend" aria-label="Az alkalmazások">
+          <li><a href="#notes" style="--c:#5B3E96">openNotes</a></li>
+          <li><a href="#calendar" style="--c:#D45D79">openCalendar</a></li>
+          <li><a href="#kanban" style="--c:#2F5A8A">openKanban</a></li>
+          <li><a href="#launcher" style="--c:#D2691E">openLauncher</a></li>
+        </ul>
+        <p class="hero-hint">A szálak a valódi kapcsolatokat mutatják: határidők, hivatkozások, indítás.</p>
+      </div>
+    </section>
+
+    <!-- ═══════════ openNotes ═══════════ -->
+    <section class="app" id="notes" data-accent="#5B3E96" aria-labelledby="notes-title">
+      <div class="app-copy">
+        <img class="app-icon" src="assets/icons/openNotes.png" alt="" width="72" height="72" />
+        <h2 id="notes-title" class="app-name">openNotes</h2>
+        <p class="app-lead">Jegyzetek Markdownban, egy gyorsbillentyűnyire. A mini ablak mindig kéznél van, a teendők nem vesznek el.</p>
+        <ul class="facts">
+          <li><b>Mini ablak</b> mindig felül – <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> a legutóbbi jegyzetet nyitja bárhonnan.</li>
+          <li><b>Képek</b> vágólapról vagy behúzással, a jegyzetbe ágyazva.</li>
+          <li><b>Prioritás, határidő, emlékeztető</b> – naponta szól, amíg kész nem lesz.</li>
+          <li><b>Mappák és Lezártak:</b> színes mappák, a kész jegyzetek külön, rejtve – kártyanézetben is.</li>
+          <li><b>.openNote</b> fájlba exportálva egyben elküldhető; Markdown export is van.</li>
+        </ul>
+        <p class="try">Próbáld ki: írj a bal oldalba, pipáld ki a teendőt, adj határidőt – az a naptár demóban is megjelenik.</p>
+      </div>
+      <div class="app-demo">
+        <div class="window" id="notes-demo" aria-label="openNotes demó">
+          <div class="win-bar">
+            <img src="assets/icons/openNotes.png" alt="" width="18" height="18" />
+            <span class="win-title">open<b>Notes</b></span>
+            <button class="win-btn" type="button" data-action="mini" title="Mini ablak">Mini ablak</button>
+          </div>
+          <div class="notes-body">
+            <aside class="notes-list" aria-label="Jegyzetek"></aside>
+            <div class="notes-main">
+              <div class="notes-meta">
+                <div class="prio" role="radiogroup" aria-label="Prioritás">
+                  <button type="button" data-prio="high" style="--p:#E0434F" role="radio">Magas</button>
+                  <button type="button" data-prio="medium" style="--p:#F0B429" role="radio">Közepes</button>
+                  <button type="button" data-prio="low" style="--p:#8B6BD6" role="radio">Alacsony</button>
+                </div>
+                <label class="due">Határidő <input type="date" data-field="due" /></label>
+              </div>
+              <div class="notes-split">
+                <textarea class="md-input" spellcheck="false" aria-label="Markdown szerkesztő"></textarea>
+                <article class="md-preview" aria-label="Előnézet"></article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ openCalendar ═══════════ -->
+    <section class="app app-flip" id="calendar" data-accent="#D45D79" aria-labelledby="calendar-title">
+      <div class="app-copy">
+        <img class="app-icon" src="assets/icons/openCalendar.png" alt="" width="72" height="72" />
+        <h2 id="calendar-title" class="app-name">openCalendar</h2>
+        <p class="app-lead">Nap, hét, hónap és napló nézet. Ismétlődő események, több emlékeztető – és mellettük a jegyzetek és kártyák határidői.</p>
+        <ul class="facts">
+          <li><b>Ismétlődés</b> naponta, hetente kiválasztott napokon, havonta vagy évente.</li>
+          <li><b>Emlékeztetők</b> kezdéskor, előtte percekkel, órákkal vagy napokkal – szundival.</li>
+          <li><b>Több naptár</b> saját színnel; <b>.opencalendar</b> export és import.</li>
+          <li><b>openNotes és openKanban</b> határidői élőben frissülve, kattintásra megnyílnak.</li>
+        </ul>
+        <p class="try">Kattints egy napra, és adj hozzá eseményt. A lila jelek jegyzetek, a kékek Kanban-kártyák.</p>
+      </div>
+      <div class="app-demo">
+        <div class="window" id="calendar-demo" aria-label="openCalendar demó">
+          <div class="win-bar">
+            <img src="assets/icons/openCalendar.png" alt="" width="18" height="18" />
+            <span class="win-title">open<b>Calendar</b></span>
+            <div class="cal-nav">
+              <button class="win-icon" type="button" data-action="prev" aria-label="Előző hónap">‹</button>
+              <span class="cal-month" aria-live="polite"></span>
+              <button class="win-icon" type="button" data-action="next" aria-label="Következő hónap">›</button>
+            </div>
+          </div>
+          <div class="cal-body">
+            <div class="cal-grid" role="grid" aria-label="Hónap nézet"></div>
+            <aside class="cal-agenda" aria-label="Napi napló">
+              <h3 class="cal-day"></h3>
+              <ul class="cal-items"></ul>
+              <form class="cal-add">
+                <input name="title" type="text" placeholder="Új esemény…" aria-label="Esemény neve" required maxlength="40" />
+                <input name="time" type="time" value="10:00" aria-label="Kezdés" />
+                <button type="submit" class="btn btn-small">Hozzáadás</button>
+              </form>
+              <div class="cal-legend">
+                <span style="--c:#D45D79">esemény</span>
+                <span style="--c:#5B3E96">openNotes</span>
+                <span style="--c:#2F5A8A">openKanban</span>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ openKanban ═══════════ -->
+    <section class="app app-wide" id="kanban" data-accent="#2F5A8A" aria-labelledby="kanban-title">
+      <div class="app-copy">
+        <img class="app-icon" src="assets/icons/openKanban.png" alt="" width="72" height="72" />
+        <h2 id="kanban-title" class="app-name">openKanban</h2>
+        <p class="app-lead">Workspace-ek, táblák, oszlopok és kártyák – úgy, ahogy a Trellóban megszoktad, csak a saját gépeden.</p>
+        <ul class="facts facts-row">
+          <li><b>Húzd és ejtsd</b> kártyák és oszlopok között.</li>
+          <li><b>WIP limit:</b> tele oszlopba nem fér több kártya.</li>
+          <li><b>Kész oszlop:</b> az odahúzott kártya magától kész.</li>
+          <li><b>Címkék, határidő, ellenőrzőlista</b>; teljes workspace egy <b>.openKanban</b> fájlban.</li>
+        </ul>
+        <p class="try">Húzd a kártyákat. A „Folyamatban” oszlopba legfeljebb 3 fér. A határidős kártyák a naptárban is ott vannak.</p>
+      </div>
+      <div class="app-demo">
+        <div class="window" id="kanban-demo" aria-label="openKanban demó">
+          <div class="win-bar">
+            <img src="assets/icons/openKanban.png" alt="" width="18" height="18" />
+            <span class="win-title">open<b>Kanban</b></span>
+            <span class="kb-crumb">Saját projektek / Költözés</span>
+          </div>
+          <div class="kb-board"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ openLauncher ═══════════ -->
+    <section class="app app-flip" id="launcher" data-accent="#D2691E" aria-labelledby="launcher-title">
+      <div class="app-copy">
+        <img class="app-icon" src="assets/icons/openLauncher.png" alt="" width="72" height="72" />
+        <h2 id="launcher-title" class="app-name">openLauncher</h2>
+        <p class="app-lead">Egy helyen indítod, telepíted, frissíted és távolítod el az alkalmazásokat. Internet nem kell hozzá: a telepítők vele érkeznek.</p>
+        <ul class="facts">
+          <li><b>Közös telepítő:</b> teljes, csak launcher, vagy te választod ki az appokat.</li>
+          <li><b>Rendszergazda nélkül</b> telepít, felhasználónként; céges csendes telepítés is megy.</li>
+          <li><b>Eltávolításkor</b> az adataid megmaradnak.</li>
+        </ul>
+        <p class="try">Telepíts fel egy alkalmazást, aztán indítsd el.</p>
+      </div>
+      <div class="app-demo">
+        <div class="window" id="launcher-demo" aria-label="openLauncher demó">
+          <div class="win-bar">
+            <img src="assets/icons/openLauncher.png" alt="" width="18" height="18" />
+            <span class="win-title">open<b>Launcher</b></span>
+            <span class="ln-summary" aria-live="polite"></span>
+          </div>
+          <div class="ln-grid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════ Connections ═══════════ -->
+    <section class="links" id="links" aria-labelledby="links-title">
+      <h2 id="links-title" class="section-title">Külön is jók. Együtt kevesebbet kell fejben tartanod.</h2>
+      <p class="section-lead">Egyik alkalmazás sem kell a másikhoz. Ha mégis mellettük van, ezek történnek maguktól:</p>
+      <div class="links-map">
+        <svg class="links-svg" viewBox="0 0 900 400" role="img" aria-labelledby="links-desc">
+          <desc id="links-desc">openNotes és openKanban határidői az openCalendarba futnak; az openKanban kártyái jegyzetet nyitnak az openNotes-ban; az openLauncher mindhármat indítja.</desc>
+          <defs>
+            <marker id="arrow-notes" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B3E96" /></marker>
+            <marker id="arrow-kanban" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2F5A8A" /></marker>
+            <marker id="arrow-launcher" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#D2691E" /></marker>
+          </defs>
+          <path class="flow" stroke="#5B3E96" d="M192,104 C270,48 340,48 406,100" marker-end="url(#arrow-notes)" />
+          <path class="flow" stroke="#2F5A8A" d="M708,104 C630,48 560,48 494,100" marker-end="url(#arrow-kanban)" />
+          <path class="flow" stroke="#2F5A8A" d="M716,166 C600,262 300,262 190,170" marker-end="url(#arrow-kanban)" />
+          <path class="flow" stroke="#D2691E" d="M414,300 L196,178" marker-end="url(#arrow-launcher)" />
+          <path class="flow" stroke="#D2691E" d="M450,288 L450,172" marker-end="url(#arrow-launcher)" />
+          <path class="flow" stroke="#D2691E" d="M486,300 L704,178" marker-end="url(#arrow-launcher)" />
+          <g class="links-nodes">
+            <image href="assets/icons/openNotes.png" x="114" y="84" width="72" height="72" />
+            <image href="assets/icons/openCalendar.png" x="414" y="84" width="72" height="72" />
+            <image href="assets/icons/openKanban.png" x="714" y="84" width="72" height="72" />
+            <image href="assets/icons/openLauncher.png" x="414" y="294" width="72" height="72" />
+            <text x="150" y="70">openNotes</text>
+            <text x="450" y="38">openCalendar</text>
+            <text x="750" y="70">openKanban</text>
+            <text x="450" y="390">openLauncher</text>
+          </g>
+        </svg>
+      </div>
+      <ul class="links-list">
+        <li style="--c:#5B3E96"><b>Jegyzet → naptár.</b> A határidős jegyzetek megjelennek a naptárban, emlékeztetővel együtt.</li>
+        <li style="--c:#2F5A8A"><b>Kártya → naptár.</b> A határidős kártyák külön naptárként látszanak; kattintásra a kártya nyílik meg.</li>
+        <li style="--c:#2F5A8A"><b>Kártya → jegyzet.</b> Egy kártyához jegyzet kapcsolható, ami egy kattintással megnyílik.</li>
+        <li style="--c:#D2691E"><b>Launcher → mind.</b> Indítás, telepítés, frissítés és eltávolítás egy ablakból.</li>
+      </ul>
+    </section>
+
+    <!-- ═══════════ Download ═══════════ -->
+    <section class="download" id="download" aria-labelledby="download-title">
+      <div class="dl-main">
+        <h2 id="download-title" class="section-title">Letöltés</h2>
+        <p class="section-lead">A legtöbbször a közös telepítő kell: benne van a launcher és mindhárom alkalmazás, telepítéskor választhatsz.</p>
+        <a class="btn btn-primary btn-large" data-link="release" href="#">openSuite telepítő letöltése</a>
+        <p class="dl-note">Windows 10 (1809) vagy 11, 64 bit. .NET nem kell. Rendszergazdai jog nélkül is települ.</p>
+        <p class="dl-note">A telepítő nincs digitálisan aláírva, ezért a Windows első indításkor figyelmeztethet: „További információ” → „Futtatás mindenképp”.</p>
+      </div>
+      <div class="dl-side">
+        <h3>Céges, csendes telepítés</h3>
+        <div class="cmd">
+          <code id="silent-cmd">openSuite-Setup-x64.exe /VERYSILENT /COMPONENTS="launcher,opennotes,opencalendar,openkanban"</code>
+          <button type="button" class="btn btn-small" data-copy="#silent-cmd">Másolás</button>
+        </div>
+        <h3>Csak egy alkalmazás kell?</h3>
+        <p>Az egyes telepítők is ott vannak a kiadásnál: <a data-link="releases" href="#">összes kiadás</a>.</p>
+        <h3>Forrásból</h3>
+        <div class="cmd">
+          <code id="build-cmd">git clone <span data-text="clone">…</span> &amp;&amp; cd open &amp;&amp; .\build.cmd</code>
+          <button type="button" class="btn btn-small" data-copy="#build-cmd">Másolás</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-row">
+      <p>© 2026 Szegedi Tamás és közreműködők. <a data-link="license" href="#">MIT licenc</a>, forráskód a <a data-link="repo" href="#">GitHubon</a>.</p>
+      <p>Az alkalmazások és ez az oldal a Claude Opus 5.5 használatával készültek.</p>
+    </div>
+  </footer>
+
+  <!-- Plain (non-module) scripts, so the page also works when opened directly from disk (file://). Order matters. -->
+  <script defer src="vendor/three.min.js"></script>
+  <script defer src="vendor/anime.min.js"></script>
+  <script defer src="js/config.js"></script>
+  <script defer src="js/suite.js"></script>
+  <script defer src="js/icon-data.js"></script>
+  <script defer src="js/demos/notes.js"></script>
+  <script defer src="js/demos/calendar.js"></script>
+  <script defer src="js/demos/kanban.js"></script>
+  <script defer src="js/demos/launcher.js"></script>
+  <script defer src="js/hero.js"></script>
+  <script defer src="js/main.js"></script>
+</body>
+</html>

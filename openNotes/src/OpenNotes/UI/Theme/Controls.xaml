@@ -15,6 +15,7 @@
     <conv:EnumToVisibilityConverter x:Key="EnumToVisInverse" Invert="True" />
     <conv:InverseBoolConverter x:Key="InverseBool" />
     <conv:PriorityToBrushConverter x:Key="PriorityToBrush" />
+    <conv:HexToBrushConverter x:Key="HexToBrush" />
     <conv:ReminderStateToBrushConverter x:Key="DueStateToBrush" />
     <conv:ReminderStateToBrushConverter x:Key="DueStateToSoftBrush" Soft="True" />
 
@@ -575,27 +576,51 @@
         </Setter>
     </Style>
 
-    <!-- Tag = icon glyph. -->
+    <!-- Tag = icon glyph. Items with sub-items open a sub-menu to the right. -->
     <Style TargetType="MenuItem">
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
-                    <Border x:Name="Bd" Background="Transparent" CornerRadius="7" Padding="10,8">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="26" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{TemplateBinding Tag}" Style="{StaticResource IconGlyph}" FontSize="13"
-                                       HorizontalAlignment="Left" Foreground="{TemplateBinding Foreground}" />
-                            <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" />
-                        </Grid>
-                    </Border>
+                    <Grid>
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="7" Padding="10,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="26" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{TemplateBinding Tag}" Style="{StaticResource IconGlyph}" FontSize="13"
+                                           HorizontalAlignment="Left" Foreground="{TemplateBinding Foreground}" />
+                                <ContentPresenter Grid.Column="1" ContentSource="Header" VerticalAlignment="Center" />
+                                <TextBlock x:Name="Arrow" Grid.Column="2" Text="&#xE76C;" Style="{StaticResource IconGlyph}" FontSize="10"
+                                           Margin="12,0,0,0" Foreground="{TemplateBinding Foreground}" Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <Popup x:Name="PART_Popup" Placement="Right" HorizontalOffset="-4" VerticalOffset="-15" AllowsTransparency="True"
+                               Focusable="False" PopupAnimation="Fade"
+                               IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                            <Border Margin="10" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1" CornerRadius="10" Padding="5" Effect="{StaticResource CardShadow}" MinWidth="190">
+                                <ScrollViewer MaxHeight="380" VerticalScrollBarVisibility="Auto">
+                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="Role" Value="SubmenuHeader">
+                            <Setter TargetName="Arrow" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Role" Value="TopLevelHeader">
+                            <Setter TargetName="Arrow" Property="Visibility" Value="Visible" />
+                        </Trigger>
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSoftBrush}" />
                             <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsSubmenuOpen" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSoftBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.4" />

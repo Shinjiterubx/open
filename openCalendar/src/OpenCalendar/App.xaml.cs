@@ -27,6 +27,8 @@ public partial class App : Application, IAppLifetime
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        // Keep every window inside the screen at any display scaling (125 %, 150 %, 200 % …).
+        WindowStyling.EnableScreenFitting();
 
         _instanceGuard = SingleInstanceGuard.TryAcquire();
         if (_instanceGuard is null)

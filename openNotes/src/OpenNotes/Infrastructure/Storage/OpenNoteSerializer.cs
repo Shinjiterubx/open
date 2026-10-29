@@ -10,7 +10,7 @@ namespace OpenNotes.Infrastructure.Storage;
 /// <summary>
 /// The <c>.openNote</c> format is a plain ZIP archive (see docs/FORMAT.md):
 /// <code>
-/// manifest.json   – metadata (format, version, id, title, dates, pinned)
+/// manifest.json   – metadata (format, version, id, title, dates, pinned, task state, folder)
 /// content.md      – the note body as UTF-8 Markdown
 /// assets/*        – embedded images referenced as assets/name.ext
 /// </code>
@@ -48,7 +48,9 @@ public sealed class OpenNoteSerializer : INoteSerializer
             note.Priority == NotePriority.None ? null : note.Priority,
             note.DueDate, note.DueTime,
             note.ReminderEnabled ? true : null,
-            note.IsDone ? true : null);
+            note.IsDone ? true : null,
+            note.FolderId,
+            string.IsNullOrWhiteSpace(note.FolderName) ? null : note.FolderName);
         WriteText(archive, ManifestEntry, JsonSerializer.Serialize(manifest, JsonOptions));
         WriteText(archive, ContentEntry, note.Content);
 
@@ -89,6 +91,8 @@ public sealed class OpenNoteSerializer : INoteSerializer
             DueTime = manifest.DueTime,
             ReminderEnabled = manifest.Reminder ?? false,
             IsDone = manifest.IsDone ?? false,
+            FolderId = manifest.FolderId,
+            FolderName = manifest.FolderName,
             Content = archive.GetEntry(ContentEntry) is { } contentEntry ? ReadText(contentEntry) : string.Empty,
         };
 
@@ -140,5 +144,7 @@ public sealed class OpenNoteSerializer : INoteSerializer
         DateOnly? DueDate = null,
         TimeOnly? DueTime = null,
         bool? Reminder = null,
-        bool? IsDone = null);
+        bool? IsDone = null,
+        Guid? FolderId = null,
+        string? FolderName = null);
 }

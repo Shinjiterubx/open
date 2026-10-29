@@ -34,6 +34,8 @@ public partial class App : Application, IAppLifetime
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
+        // Keep every window inside the screen at any display scaling (125 %, 150 %, 200 % …).
+        WindowStyling.EnableScreenFitting();
 
         _instanceGuard = SingleInstanceGuard.TryAcquire();
         if (_instanceGuard is null)
@@ -175,6 +177,7 @@ public partial class App : Application, IAppLifetime
         services.AddSingleton<ISettingsStore, JsonSettingsStore>();
         services.AddSingleton<INoteSerializer, OpenNoteSerializer>();
         services.AddSingleton<INoteRepository, FileNoteRepository>();
+        services.AddSingleton<IFolderRepository, JsonFolderRepository>();
         services.AddSingleton<OpenNoteFileFormat>();
         services.AddSingleton<MarkdownFileFormat>();
         services.AddSingleton<INoteImporter>(sp => sp.GetRequiredService<OpenNoteFileFormat>());

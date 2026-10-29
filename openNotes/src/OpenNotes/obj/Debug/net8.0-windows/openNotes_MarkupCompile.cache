@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP1_0_OR_GREATER;NETCOREAPP1_1_OR_GREATER;NETCOREAPP2_0_OR_GREATER;NETCOREAPP2_1_OR_GREATER;NETCOREAPP2_2_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\szegedi.tamas\Desktop\open\openNotes\src\OpenNotes\App.xaml
-9204642393
+101621801255
 9850988486
-771805962140
+851832360040
 215-997221197
-UI\Controls\MarkdownEditor.xaml;UI\Theme\Colors.xaml;UI\Theme\Controls.xaml;UI\Views\ImageViewerWindow.xaml;UI\Views\MainWindow.xaml;UI\Views\MiniWindow.xaml;UI\Views\ReminderSummaryWindow.xaml;UI\Views\SettingsWindow.xaml;UI\Views\ThemedDialog.xaml;
+UI\Controls\MarkdownEditor.xaml;UI\Theme\Colors.xaml;UI\Theme\Controls.xaml;UI\Views\FolderDialog.xaml;UI\Views\ImageViewerWindow.xaml;UI\Views\MainWindow.xaml;UI\Views\MiniWindow.xaml;UI\Views\ReminderSummaryWindow.xaml;UI\Views\SettingsWindow.xaml;UI\Views\ThemedDialog.xaml;
 
 True
 

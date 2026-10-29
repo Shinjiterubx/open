@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCopyrightAttribute("Copyright © 2026 Szegedi Tamás and contributors")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("openKanban – open source Kanban boards for Windows.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+345ae88cbe1deb0d2d4f211a933d592dfd06f4a3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+03f2cc96e4a8040185a5417e57ff8888c6724a80")]
 [assembly: System.Reflection.AssemblyProductAttribute("openKanban")]
 [assembly: System.Reflection.AssemblyTitleAttribute("openKanban")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

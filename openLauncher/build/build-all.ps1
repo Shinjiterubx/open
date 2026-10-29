@@ -15,7 +15,7 @@
 
 .EXAMPLE
   .\build\build-all.ps1
-  .\build\build-all.ps1 -Version 1.1.0
+  .\build\build-all.ps1 -Version 1.1.0  # default: the VERSION file in the repo root
   .\build\build-all.ps1 -SkipApps        # reuse the setups already in installer\payload
   .\build\build-all.ps1 -SkipTests
 
@@ -23,7 +23,7 @@
   Requires the .NET 8 SDK and Inno Setup 6 (winget install JRSoftware.InnoSetup).
 #>
 param(
-    [string] $Version = "1.0.0",
+    [string] $Version = "",   # empty = read from the VERSION file in the repository root
     [switch] $SkipApps,
     [switch] $SkipTests
 )
@@ -34,6 +34,13 @@ $suiteRoot = Split-Path -Parent $root
 $payloadDir = Join-Path $root "installer\payload"
 $publishDir = Join-Path $root "artifacts\publish\win-x64"
 $apps = @("openNotes", "openCalendar", "openKanban")
+
+if (-not $Version) {
+    $versionFile = Join-Path $suiteRoot "VERSION"
+    $Version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.0" }
+}
+if ($Version -notmatch '^\d+\.\d+\.\d+$') { throw "Invalid version '$Version' (expected e.g. 1.2.0)." }
+Write-Host "Version: $Version" -ForegroundColor DarkYellow
 
 New-Item -ItemType Directory -Force -Path $payloadDir | Out-Null
 

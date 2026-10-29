@@ -28,7 +28,9 @@ note.openNote
   "dueDate": "2026-10-20",
   "dueTime": "14:00:00",
   "reminder": true,
-  "isDone": false
+  "isDone": false,
+  "folderId": "9a6f1c2b-3d4e-4f50-8a1b-2c3d4e5f6a7b",
+  "folderName": "Munka"
 }
 ```
 
@@ -45,7 +47,9 @@ note.openNote
 | `dueDate` | `yyyy-MM-dd` | Optional deadline (local date). |
 | `dueTime` | `HH:mm:ss` | Optional; without it the note is due at the end of `dueDate`. |
 | `reminder` | bool | Optional. Remind daily until done or switched off. |
-| `isDone` | bool | Optional. Done notes don't remind. |
+| `isDone` | bool | Optional. Closed ("lezárt") notes don't remind and are listed under *Lezártak*. |
+| `folderId` | GUID | Optional. Folder the note is filed in (see `folders.json` below). |
+| `folderName` | string | Optional. Folder name, so an imported note can be filed into a folder of the same name. |
 
 ## content.md
 
@@ -67,3 +71,19 @@ so they are safe as paths and URLs. Identical content is stored once.
 
 * New optional manifest fields may be added without bumping `version`; readers ignore unknown fields.
 * Changing the meaning of existing fields or the layout bumps `version`.
+
+## folders.json (library only)
+
+The folder list lives next to the notes (`%APPDATA%\openNotes\folders.json`), not inside `.openNote` files:
+
+```json
+{
+  "version": 1,
+  "folders": [
+    { "id": "9a6f1c2b-3d4e-4f50-8a1b-2c3d4e5f6a7b", "name": "Munka", "color": "#2F5A8A" }
+  ]
+}
+```
+
+Notes reference folders by `id`, so renaming a folder doesn't touch any note file. If the file is missing or broken,
+notes are still loaded – they just appear without folder.

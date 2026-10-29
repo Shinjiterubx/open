@@ -30,6 +30,7 @@ public sealed class AppPaths : IAppPaths
         NotesDirectory = Path.Combine(DataRoot, "Notes");
         TrashDirectory = Path.Combine(DataRoot, "Trash");
         SettingsFile = Path.Combine(DataRoot, "settings.json");
+        FoldersFile = Path.Combine(DataRoot, "folders.json");
         LogDirectory = Path.Combine(localRoot, "Logs");
         PreviewCacheDirectory = Path.Combine(localRoot, "PreviewCache");
         WebViewDataDirectory = Path.Combine(localRoot, "WebView2");
@@ -43,6 +44,7 @@ public sealed class AppPaths : IAppPaths
     public string NotesDirectory { get; }
     public string TrashDirectory { get; }
     public string SettingsFile { get; }
+    public string FoldersFile { get; }
     public string LogDirectory { get; }
     public string PreviewCacheDirectory { get; }
     public string WebViewDataDirectory { get; }

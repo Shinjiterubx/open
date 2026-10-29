@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using OpenNotes.Core.Abstractions;
 using OpenNotes.UI.Services;
 using OpenNotes.UI.ViewModels;
@@ -36,6 +37,7 @@ public partial class MainWindow : Window
         DueTimeBox.KeyDown += OnDueTimeKeyDown;
         DueCalendar.PreviewMouseUp += OnCalendarPreviewMouseUp;
         _viewModel.NoteCreated += (_, _) => { if (IsActive) FocusTitle(); };
+        Sidebar.SizeChanged += (_, _) => FitSidebarPanels();
     }
 
     public void FocusEditor()
@@ -83,7 +85,12 @@ public partial class MainWindow : Window
 
     private void OnWindowPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control)
+        if (e.Key == Key.Escape && _viewModel.IsCardView)
+        {
+            _viewModel.IsCardView = false;
+            e.Handled = true;
+        }
+        else if (e.Key == Key.F && Keyboard.Modifiers == ModifierKeys.Control && !_viewModel.IsCardView)
         {
             SearchBox.Focus();
             SearchBox.SelectAll();
@@ -116,6 +123,96 @@ public partial class MainWindow : Window
         menu.PlacementTarget = ExportButton;
         menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
         menu.IsOpen = true;
+    }
+
+    /// <summary>
+    /// The reminder and folder panels share the sidebar with the note list: on short windows (small screens,
+    /// 150 %+ scaling) they get less room, so the note list always stays usable.
+    /// </summary>
+    private void FitSidebarPanels()
+    {
+        var height = Sidebar.ActualHeight;
+        if (height <= 0) return;
+        ReminderScroll.MaxHeight = Math.Clamp(height * 0.18, 56, 210);
+        FolderList.MaxHeight = Math.Clamp(height * 0.22, 64, 232);
+    }
+
+    // ───────────────────────── folder menus ─────────────────────────
+
+    /// <summary>Note context menu (list row or card): fills "Áthelyezés mappába" and names the close / reopen item.</summary>
+    private void OnNoteMenuOpened(object sender, RoutedEventArgs e)
+    {
+        if (sender is not ContextMenu menu || (menu.PlacementTarget as FrameworkElement)?.DataContext is not NoteItemViewModel note) return;
+
+        foreach (var item in menu.Items.OfType<MenuItem>())
+        {
+            switch (item.Uid)
+            {
+                case "MoveMenu":
+                    FillFolderMenu(item.Items, note);
+                    break;
+                case "CloseMenu":
+                    item.Header = note.IsDone ? "Újranyitás" : "Lezárás (Kész)";
+                    item.Tag = note.IsDone ? "\uE7A7" : "\uE73E";
+                    break;
+            }
+        }
+    }
+
+    /// <summary>The folder chip above the title: move the open note to another folder.</summary>
+    private void OnFolderChipClick(object sender, RoutedEventArgs e)
+    {
+        if (_viewModel.SelectedNote is not { } note) return;
+
+        var menu = new ContextMenu { PlacementTarget = FolderChip, Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom };
+        FillFolderMenu(menu.Items, note);
+        menu.IsOpen = true;
+    }
+
+    /// <summary>"Mappa nélkül", every folder (the current one checked), then "Új mappa…".</summary>
+    private void FillFolderMenu(ItemCollection items, NoteItemViewModel note)
+    {
+        items.Clear();
+        foreach (var target in _viewModel.MoveTargets)
+        {
+            var isCurrent = ReferenceEquals(note.Folder, target) || (note.Folder is null && !target.IsFolder);
+            items.Add(new MenuItem
+            {
+                Header = FolderHeader(target),
+                Tag = isCurrent ? "\uE73E" : string.Empty,
+                FontWeight = isCurrent ? FontWeights.SemiBold : FontWeights.Normal,
+                Command = _viewModel.MoveToFolderCommand,
+                CommandParameter = new MoveRequest(note, target),
+                IsEnabled = !isCurrent,
+            });
+        }
+
+        items.Add(new Separator());
+        items.Add(new MenuItem
+        {
+            Header = "Új mappa…",
+            Tag = "\uE710",
+            Command = _viewModel.NewFolderAndMoveCommand,
+            CommandParameter = note,
+        });
+    }
+
+    private static object FolderHeader(FolderNavItemViewModel target)
+    {
+        var color = Brushes.Gray as Brush;
+        try
+        {
+            color = (Brush)new BrushConverter().ConvertFromString(target.Color)!;
+        }
+        catch (FormatException)
+        {
+            // keep grey
+        }
+
+        var panel = new StackPanel { Orientation = Orientation.Horizontal };
+        panel.Children.Add(new System.Windows.Shapes.Ellipse { Width = 9, Height = 9, Fill = color, Margin = new Thickness(0, 0, 9, 0), VerticalAlignment = VerticalAlignment.Center });
+        panel.Children.Add(new TextBlock { Text = target.Name, VerticalAlignment = VerticalAlignment.Center });
+        return panel;
     }
 
     private static IReadOnlyList<string> NoteFiles(DragEventArgs e) =>

@@ -31,6 +31,11 @@
 - **Teendők:** az aktív emlékeztetők naponta jeleznek a határidőig és utána is, amíg el nem végzed / ki nem kapcsolod.
   A nap első indulásakor (és a beállított időpontban) **összegző ablak** mutatja a lejárt, mai és közelgő teendőket;
   a főablak oldalsávjában a **Teendők panel** és a címsor harang-ikonja (számlálóval) mindig szem előtt tartja őket.
+- **Mappák:** a jegyzetek színes mappákba rendezhetők (oldalsáv → Mappák, jobb klikk: áthelyezés). A megnyitott jegyzet
+  mappája a cím fölött színes címkeként látszik (kattintásra áthelyezhető), az oldalsávban pedig a mappa mellett a „megnyitva” jelölés.
+- **Lezártak:** a „Kész” jegyzetek lezárulnak és alapból rejtve vannak; az oldalsáv **Lezártak** kapcsolójával nézhetők meg
+  (mappánként is). Újranyitáskor visszakerülnek a jegyzetek közé. Lezáráskor egy sáv jelzi, hová került – visszavonható.
+- **Kártyanézet** (`Ctrl+Shift+K`): az összes jegyzet kártyákon, a teljes ablakban, mappák szerint csoportosítva, szűrhetően.
 - Kitűzés, keresés, automatikus mentés, tálcaikon, indítás a Windows-zal.
 - **Telepítő** (Inno Setup) – rendszergazdai jog nélkül is telepíthető, `.openNote` fájltársítással.
 
@@ -53,7 +58,7 @@ Az [openLauncher](../openLauncher)-ből az openNotes indítható, telepíthető 
 
 | | |
 |---|---|
-| `Ctrl+N` új jegyzet · `Ctrl+O` importálás · `Ctrl+F` keresés · `Ctrl+S` mentés most | `Ctrl+M` mini mód · `Ctrl+E` nézetváltás · `Ctrl+P` kitűzés · `Ctrl+,` beállítások |
+| `Ctrl+N` új jegyzet · `Ctrl+O` importálás · `Ctrl+F` keresés · `Ctrl+S` mentés most | `Ctrl+M` mini mód · `Ctrl+E` nézetváltás · `Ctrl+P` kitűzés · `Ctrl+Shift+K` kártyanézet · `Ctrl+,` beállítások |
 | `Ctrl+B` félkövér · `Ctrl+I` dőlt · `Ctrl+Shift+X` áthúzott · ``Ctrl+` `` kód | `Ctrl+1/2/3` címsor · `Ctrl+0` normál szöveg · `Ctrl+K` link |
 | `Ctrl+Shift+L` teendőlista · `Ctrl+Shift+8` felsorolás · `Ctrl+Shift+7` számozott | `Ctrl+Enter` teendő pipálása · `Ctrl+Shift+Q` idézet · `Enter` lista folytatása |
 

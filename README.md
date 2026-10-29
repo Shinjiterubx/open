@@ -25,9 +25,9 @@
 
 | | Alkalmazás | Mire jó |
 |---|---|---|
-| <img src="docs/images/openNotes.png" width="44" /> | **[openNotes](openNotes)** | Markdown jegyzetelő mini ablakkal, globális gyorsbillentyűkkel, képekkel, teendőlistával, prioritással, határidővel és emlékeztetőkkel. |
+| <img src="docs/images/openNotes.png" width="44" /> | **[openNotes](openNotes)** | Markdown jegyzetelő mini ablakkal, globális gyorsbillentyűkkel, képekkel, teendőlistával, színes mappákkal, lezárt jegyzetekkel, kártyanézettel, prioritással, határidővel és emlékeztetőkkel. |
 | <img src="docs/images/openCalendar.png" width="44" /> | **[openCalendar](openCalendar)** | Naptár nap/hét/hónap/napló nézettel, ismétlődő eseményekkel, emlékeztetőkkel – az openNotes és openKanban határidőivel együtt. |
-| <img src="docs/images/openKanban.png" width="44" /> | **[openKanban](openKanban)** | Workspace-ek, táblák, oszlopok és kártyák húzd-és-ejtsd kezeléssel, WIP limittel, címkékkel, határidőkkel, ellenőrzőlistával. |
+| <img src="docs/images/openKanban.png" width="44" /> | **[openKanban](openKanban)** | Trello-szerű workspace-ek, táblák, oszlopok és kártyák húzd-és-ejtsd kezeléssel, WIP limittel, címkékkel, határidőkkel, ellenőrzőlistával. |
 | <img src="docs/images/openLauncher.png" width="44" /> | **[openLauncher](openLauncher)** | Közös indító: az alkalmazások indítása, utólagos telepítése, frissítése és eltávolítása egy helyen. |
 
 Mindegyik alkalmazás **önállóan is működik** – a kapcsolatok (határidők a naptárban, jegyzet a kártyán)
@@ -42,7 +42,7 @@ A kész telepítők a **[Releases](../../releases/latest)** oldalon vannak:
 | `openSuite-Setup-<verzió>-x64.exe` | **Közös telepítő:** openLauncher + a kiválasztott alkalmazások (Teljes / Csak launcher / Egyéni). |
 | `openNotes-Setup-…`, `openCalendar-Setup-…`, `openKanban-Setup-…` | Egy-egy alkalmazás külön. |
 
-- Windows 10 (1809) vagy újabb, 64 bit. **Nem kell** hozzá .NET (a telepítők tartalmazzák).
+- Windows 10 (1809) vagy újabb, 64 bit. Minden kijelzőméreten és nagyításon (100–200 %) képernyőre igazított ablakok. **Nem kell** hozzá .NET (a telepítők tartalmazzák).
 - Alapból **felhasználónként** telepít, rendszergazdai jog nélkül; rendszergazda „minden felhasználó” módot is választhat.
 - Céges, csendes telepítés:
   ```
@@ -82,7 +82,7 @@ cd open
 
 dotnet test open.sln                 # minden teszt
 .\build.cmd                          # minden app + telepítők + közös telepítő
-.\build.cmd -Version 1.1.0
+.\build.cmd -Version 1.1.0           # alapból a VERSION fájl verziója
 ```
 
 Eredmény: `openLauncher\artifacts\installer\openSuite-Setup-<verzió>-x64.exe`, az egyes appok telepítői a saját `artifacts\installer` mappájukban.

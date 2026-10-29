@@ -1,5 +1,6 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using OpenNotes.Core.Library;
 using OpenNotes.Core.Markdown;
 using OpenNotes.Core.Models;
 using OpenNotes.Core.Reminders;
@@ -19,6 +20,9 @@ public sealed class NoteItemViewModel : ObservableObject
     public string Title => Model.DisplayTitle;
     public bool HasTitle => !string.IsNullOrWhiteSpace(Model.Title);
     public string Snippet => MarkdownText.Snippet(Model.Content, 140) is { Length: > 0 } text ? text : "Üres jegyzet";
+
+    /// <summary>Longer excerpt for the card view.</summary>
+    public string CardSnippet => MarkdownText.Snippet(Model.Content, 320) is { Length: > 0 } text ? text : "Üres jegyzet";
     public DateTimeOffset UpdatedAt => Model.UpdatedAt;
     public string UpdatedText => FormatRelative(Model.UpdatedAt);
 
@@ -33,6 +37,35 @@ public sealed class NoteItemViewModel : ObservableObject
     public ReminderState? DueState =>
         Model.DueDate is null || Model.IsDone ? null : ReminderRules.Classify(ReminderRules.DueMoment(Model)!.Value, DateTime.Now);
 
+    private FolderNavItemViewModel? _folder;
+
+    /// <summary>The folder the note is filed in (<c>null</c> = no folder). Kept in sync with the model.</summary>
+    public FolderNavItemViewModel? Folder
+    {
+        get => _folder;
+        set
+        {
+            _folder = value is { IsFolder: true } ? value : null;
+            Model.FolderId = _folder?.FolderId;
+            Model.FolderName = _folder?.Name;
+            RefreshFolder();
+        }
+    }
+
+    public bool HasFolder => _folder is not null;
+    public string FolderName => _folder?.Name ?? "Mappa nélkül";
+    public string FolderColor => _folder?.Color ?? "#B9B6C4";
+
+    /// <summary>Call after the folder was renamed or recoloured.</summary>
+    public void RefreshFolder()
+    {
+        if (_folder is not null) Model.FolderName = _folder.Name;
+        OnPropertyChanged(nameof(Folder));
+        OnPropertyChanged(nameof(HasFolder));
+        OnPropertyChanged(nameof(FolderName));
+        OnPropertyChanged(nameof(FolderColor));
+    }
+
     public bool IsPinned
     {
         get => Model.IsPinned;
@@ -44,10 +77,7 @@ public sealed class NoteItemViewModel : ObservableObject
         }
     }
 
-    public bool Matches(string query) =>
-        string.IsNullOrWhiteSpace(query)
-        || Model.Title.Contains(query, StringComparison.CurrentCultureIgnoreCase)
-        || Model.Content.Contains(query, StringComparison.CurrentCultureIgnoreCase);
+    public bool Matches(string query) => NoteFilter.MatchesText(Model, query);
 
     /// <summary>Call after the underlying note changed.</summary>
     public void Refresh()
@@ -55,6 +85,7 @@ public sealed class NoteItemViewModel : ObservableObject
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(HasTitle));
         OnPropertyChanged(nameof(Snippet));
+        OnPropertyChanged(nameof(CardSnippet));
         OnPropertyChanged(nameof(UpdatedAt));
         OnPropertyChanged(nameof(UpdatedText));
         RefreshTaskState();

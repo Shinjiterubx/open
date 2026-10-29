@@ -29,7 +29,17 @@ public sealed class Note
     /// <summary>Remind daily until <see cref="IsDone"/> is set or the reminder is turned off.</summary>
     public bool ReminderEnabled { get; set; }
 
+    /// <summary>Closed ("lezárt") notes are hidden from the main list and shown under "Lezártak".</summary>
     public bool IsDone { get; set; }
+
+    /// <summary>The folder the note is filed in (<see cref="NoteFolder.Id"/>); <c>null</c> = no folder.</summary>
+    public Guid? FolderId { get; set; }
+
+    /// <summary>
+    /// Folder name stored with the note when it is exported, so the receiver can file it into a folder of the
+    /// same name. Not used inside the library (there the folder is resolved by <see cref="FolderId"/>).
+    /// </summary>
+    public string? FolderName { get; set; }
 
     public IReadOnlyDictionary<string, byte[]> Assets => _assets;
 

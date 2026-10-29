@@ -34,9 +34,12 @@ public sealed class DialogService : IDialogService
     public void ShowError(string title, string message) =>
         ThemedDialog.Present(ActiveWindow(), title, message, "Rendben", cancelText: null, isError: true);
 
+    public FolderDialogResult? EditFolder(string title, string name, string color, IReadOnlyList<string> palette, string confirmText) =>
+        FolderDialog.Present(ActiveWindow(), title, name, color, palette, confirmText);
+
     private static Window? ActiveWindow()
     {
-        var windows = Application.Current.Windows.OfType<Window>().Where(w => w.IsVisible && w is not ThemedDialog).ToList();
+        var windows = Application.Current.Windows.OfType<Window>().Where(w => w.IsVisible && w is not ThemedDialog && w is not FolderDialog).ToList();
         return windows.FirstOrDefault(w => w.IsActive) ?? windows.FirstOrDefault();
     }
 }

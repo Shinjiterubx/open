@@ -27,7 +27,101 @@
         <KeyBinding Gesture="Ctrl+E" Command="{Binding CycleViewModeCommand}" />
         <KeyBinding Gesture="Ctrl+P" Command="{Binding TogglePinCommand}" />
         <KeyBinding Gesture="Ctrl+OemComma" Command="{Binding OpenSettingsCommand}" />
+        <KeyBinding Gesture="Ctrl+Shift+K" Command="{Binding ToggleCardViewCommand}" />
     </Window.InputBindings>
+
+    <Window.Resources>
+        <!-- Compact rows for the folder navigation. -->
+        <Style x:Key="NavItem" TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="9,6" />
+            <Setter Property="Margin" Value="0,0,0,1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" Background="Transparent" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSofterBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Folder filter chips in the card view (same selection as the sidebar). -->
+        <Style x:Key="FolderChipItem" TargetType="ListBoxItem">
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="Bd" CornerRadius="15" Padding="12,5" BorderThickness="1"
+                                Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderStrongBrush}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Folder rows: Edit / Delete (only real folders). DataContext = MainViewModel via the row's Tag. -->
+        <ContextMenu x:Key="FolderContextMenu" x:Shared="False"
+                     DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+            <MenuItem Header="Szerkesztés…" Tag="&#xE70F;" Command="{Binding EditFolderCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Mappa törlése…" Tag="&#xE74D;" Style="{StaticResource DangerMenuItem}" Command="{Binding DeleteFolderCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        </ContextMenu>
+
+        <!-- Notes (list rows and cards). "Áthelyezés mappába" and the close / reopen text are filled in OnNoteMenuOpened. -->
+        <ContextMenu x:Key="NoteContextMenu" x:Shared="False" Opened="OnNoteMenuOpened"
+                     DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
+            <MenuItem Uid="MoveMenu" Header="Áthelyezés mappába" Tag="&#xE8DE;">
+                <MenuItem Header="…" />
+            </MenuItem>
+            <MenuItem Uid="CloseMenu" Header="Lezárás" Tag="&#xE73E;" Command="{Binding ToggleClosedCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Kitűzés / levétel" Tag="&#xE718;" Command="{Binding TogglePinCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Exportálás .openNote fájlba…" Tag="&#xE72D;" Command="{Binding ExportOpenNoteCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <MenuItem Header="Exportálás Markdown fájlba…" Tag="&#xE74E;" Command="{Binding ExportMarkdownCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+            <Separator />
+            <MenuItem Header="Törlés" Tag="&#xE74D;" Style="{StaticResource DangerMenuItem}" Command="{Binding DeleteNoteCommand}"
+                      CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        </ContextMenu>
+
+        <!-- Small "Lezárva" pill. -->
+        <Style x:Key="ClosedPill" TargetType="Border">
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="6,1" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Background" Value="{StaticResource SurfaceSunkenBrush}" />
+        </Style>
+    </Window.Resources>
 
     <Grid x:Name="RootGrid">
         <Grid.RowDefinitions>
@@ -54,7 +148,8 @@
 
                 <!-- View mode -->
                 <Border Grid.Column="1" Style="{StaticResource SegmentedHost}" HorizontalAlignment="Center" VerticalAlignment="Center"
-                        WindowChrome.IsHitTestVisibleInChrome="True">
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Visibility="{Binding IsCardView, Converter={StaticResource InverseBoolToVis}}">
                     <StackPanel Orientation="Horizontal">
                         <RadioButton Style="{StaticResource SegmentedItem}" GroupName="ViewMode" ToolTip="Csak szerkesztő (Ctrl+E váltás)"
                                      IsChecked="{Binding ViewMode, Converter={StaticResource EnumEquals}, ConverterParameter={x:Static models:ViewMode.Editor}}">
@@ -82,6 +177,8 @@
 
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,10,0"
                             WindowChrome.IsHitTestVisibleInChrome="True">
+                    <ToggleButton Style="{StaticResource IconToggleButton}" Content="&#xE8A9;" IsChecked="{Binding IsCardView}" Margin="0,0,4,0"
+                                  ToolTip="Összes jegyzet kártyákon  (Ctrl+Shift+K)" />
                     <Grid ToolTip="{Binding ReminderCountsText}">
                         <Button Style="{StaticResource IconButton}" Content="&#xEA8F;" Command="{Binding ShowReminderSummaryCommand}" />
                         <Border Style="{StaticResource Badge}" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,1,-2,0"
@@ -111,11 +208,12 @@
             </Grid.ColumnDefinitions>
 
             <!-- Sidebar -->
-            <Border Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
+            <Border x:Name="Sidebar" Background="{StaticResource SurfaceAltBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
                 <DockPanel>
                     <Grid DockPanel.Dock="Top" Margin="22,20,14,12">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="Jegyzetek" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding ListHeaderText}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" MaxWidth="150" />
                             <Border Background="{StaticResource AccentSoftBrush}" CornerRadius="9" Padding="8,2" Margin="9,0,0,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding NoteCountText}" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
                             </Border>
@@ -186,7 +284,7 @@
                                     </Button.Style>
                                 </Button>
                             </Grid>
-                            <ScrollViewer MaxHeight="210" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0"
+                            <ScrollViewer x:Name="ReminderScroll" MaxHeight="210" VerticalScrollBarVisibility="Auto" Margin="0,8,0,0"
                                           Visibility="{Binding IsReminderPanelExpanded, Converter={StaticResource BoolToVis}}">
                                 <ItemsControl ItemsSource="{Binding Reminders}" ItemTemplate="{StaticResource ReminderRowTemplate}" />
                             </ScrollViewer>
@@ -196,13 +294,114 @@
                     <TextBox x:Name="SearchBox" DockPanel.Dock="Top" Style="{StaticResource SearchBox}" Margin="14,0,14,10"
                              Tag="Keresés  (Ctrl+F)" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
 
+                    <!-- Folders -->
+                    <DockPanel DockPanel.Dock="Top" Margin="14,0,14,8">
+                        <Grid DockPanel.Dock="Top" Margin="0,0,0,2">
+                            <Button Command="{Binding ToggleFolderPanelCommand}" Cursor="Hand" HorizontalAlignment="Left"
+                                    ToolTip="Mappák megjelenítése / elrejtése">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="Transparent" Padding="9,4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="Mappák" Style="{StaticResource SectionLabel}" VerticalAlignment="Center" />
+                                                <TextBlock FontSize="9" Margin="7,1,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock" BasedOn="{StaticResource IconGlyph}">
+                                                            <Setter Property="Foreground" Value="{StaticResource InkMutedBrush}" />
+                                                            <Setter Property="Text" Value="&#xE70D;" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsFolderPanelExpanded}" Value="True">
+                                                                    <Setter Property="Text" Value="&#xE70E;" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                            <Button Style="{StaticResource IconButton}" Width="26" Height="26" FontSize="11" Content="&#xE710;"
+                                    HorizontalAlignment="Right" Command="{Binding NewFolderCommand}" ToolTip="Új mappa" />
+                        </Grid>
+                        <ListBox x:Name="FolderList" Style="{StaticResource NoteList}" Padding="0" MaxHeight="232"
+                                 Visibility="{Binding IsFolderPanelExpanded, Converter={StaticResource BoolToVis}}"
+                                 ItemContainerStyle="{StaticResource NavItem}"
+                                 ItemsSource="{Binding FolderNav}" SelectedItem="{Binding SelectedNav}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:FolderNavItemViewModel}">
+                                    <Grid Background="Transparent" Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=ListBox}}">
+                                        <Grid.Style>
+                                            <Style TargetType="Grid">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsFolder}" Value="True">
+                                                        <Setter Property="ContextMenu" Value="{StaticResource FolderContextMenu}" />
+                                                        <Setter Property="ToolTip" Value="Jobb klikk: szerkesztés, törlés" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Grid.Style>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="22" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Glyph}" Style="{StaticResource IconGlyph}" FontSize="13" HorizontalAlignment="Left"
+                                                   Foreground="{Binding Color, Converter={StaticResource HexToBrush}}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Name}" FontSize="13" TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center" Margin="4,0,8,0" />
+                                        <!-- The open note is in this folder -->
+                                        <Border Grid.Column="2" CornerRadius="7" Padding="6,0" Margin="0,0,8,0" VerticalAlignment="Center"
+                                                Background="{Binding Color, Converter={StaticResource HexToBrush}}"
+                                                Visibility="{Binding ContainsOpenNote, Converter={StaticResource BoolToVis}}"
+                                                ToolTip="Ebben a mappában van a megnyitott jegyzet">
+                                            <TextBlock Text="megnyitva" FontSize="10.5" FontWeight="SemiBold" Foreground="White" Margin="0,1" />
+                                        </Border>
+                                        <TextBlock Grid.Column="3" Text="{Binding Count}" Style="{StaticResource CaptionText}" FontSize="11.5"
+                                                   VerticalAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+
+                    <!-- Closed notes are hidden by default -->
+                    <Border DockPanel.Dock="Top" Margin="14,0,14,10" Padding="11,7" CornerRadius="10"
+                            Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1"
+                            ToolTip="A lezárt (Kész) jegyzetek megtekintése. Újranyitáskor visszakerülnek a jegyzetek közé.">
+                        <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding ShowClosed}" FontSize="13">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE73E;" Style="{StaticResource IconGlyph}" FontSize="12" Margin="0,0,8,0"
+                                           Foreground="{StaticResource InkSecondaryBrush}" />
+                                <TextBlock Text="{Binding ClosedSwitchText}" FontWeight="Medium" />
+                            </StackPanel>
+                        </CheckBox>
+                    </Border>
+
                     <Border DockPanel.Dock="Bottom" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="10,8">
                         <StackPanel Orientation="Horizontal">
                             <Button Style="{StaticResource GhostButton}" Tag="&#xE8B5;" Content="Importálás" Command="{Binding ImportCommand}"
                                     ToolTip=".openNote vagy .md fájl megnyitása  (Ctrl+O)" />
-                            <Button Style="{StaticResource GhostButton}" Tag="&#xE838;" Content="Mappa" Command="{Binding OpenNotesFolderCommand}"
-                                    ToolTip="Jegyzetek mappájának megnyitása" />
+                            <Button Style="{StaticResource GhostButton}" Tag="&#xE8A9;" Content="Kártyák" Command="{Binding ToggleCardViewCommand}"
+                                    ToolTip="Összes jegyzet kártyákon  (Ctrl+Shift+K)" />
+                            <Button Style="{StaticResource GhostButton}" Tag="&#xE838;" Content="Adatok" Command="{Binding OpenNotesFolderCommand}"
+                                    ToolTip="A jegyzetfájlok mappájának megnyitása a Fájlkezelőben" />
                         </StackPanel>
+                    </Border>
+
+                    <!-- Feedback after closing / reopening / moving a note (with undo) -->
+                    <Border DockPanel.Dock="Bottom" Margin="12,0,12,10" Padding="12,8,6,8" CornerRadius="10" Background="{StaticResource InkBrush}"
+                            Visibility="{Binding HasBanner, Converter={StaticResource BoolToVis}}">
+                        <DockPanel>
+                            <Button DockPanel.Dock="Right" Style="{StaticResource IconButton}" Width="26" Height="26" FontSize="10" Content="&#xE8BB;"
+                                    Foreground="#CCFFFFFF" Command="{Binding DismissBannerCommand}" ToolTip="Bezárás" VerticalAlignment="Center" />
+                            <Button DockPanel.Dock="Right" Content="{Binding BannerActionText}" Command="{Binding BannerActionCommand}"
+                                    Style="{StaticResource GhostButton}" Foreground="White" FontWeight="SemiBold" Margin="6,0,0,0" VerticalAlignment="Center"
+                                    Visibility="{Binding HasBannerAction, Converter={StaticResource BoolToVis}}" />
+                            <TextBlock Text="{Binding BannerText}" Foreground="White" FontSize="12.5" TextWrapping="Wrap" VerticalAlignment="Center" LineHeight="18" />
+                        </DockPanel>
                     </Border>
 
                     <Grid>
@@ -218,18 +417,7 @@
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
                                         <Grid.ContextMenu>
-                                            <ContextMenu DataContext="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource Self}}">
-                                                <MenuItem Header="Kitűzés / levétel" Tag="&#xE718;" Command="{Binding TogglePinCommand}"
-                                                          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                                <Separator />
-                                                <MenuItem Header="Exportálás .openNote fájlba…" Tag="&#xE72D;" Command="{Binding ExportOpenNoteCommand}"
-                                                          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                                <MenuItem Header="Exportálás Markdown fájlba…" Tag="&#xE74E;" Command="{Binding ExportMarkdownCommand}"
-                                                          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                                <Separator />
-                                                <MenuItem Header="Törlés" Tag="&#xE74D;" Style="{StaticResource DangerMenuItem}" Command="{Binding DeleteNoteCommand}"
-                                                          CommandParameter="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
-                                            </ContextMenu>
+                                            <StaticResource ResourceKey="NoteContextMenu" />
                                         </Grid.ContextMenu>
 
                                         <Grid>
@@ -260,8 +448,21 @@
                                         </Grid>
                                         <TextBlock Grid.Row="1" Text="{Binding Snippet}" FontSize="12.5" Foreground="{StaticResource InkSecondaryBrush}"
                                                    TextWrapping="Wrap" TextTrimming="CharacterEllipsis" MaxHeight="36" Margin="0,4,0,0" LineHeight="18" />
-                                        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,0">
-                                            <Border CornerRadius="8" Padding="6,1" Margin="0,0,8,0" VerticalAlignment="Center"
+                                        <WrapPanel Grid.Row="2" Orientation="Horizontal" Margin="0,6,0,0">
+                                            <Border CornerRadius="8" Padding="6,1" Margin="0,0,8,2" VerticalAlignment="Center"
+                                                    Background="{Binding FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=soft}"
+                                                    Visibility="{Binding HasFolder, Converter={StaticResource BoolToVis}}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE8B7;" Style="{StaticResource IconGlyph}" FontSize="10" Margin="0,0,5,0"
+                                                               Foreground="{Binding FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=text}" />
+                                                    <TextBlock Text="{Binding FolderName}" FontSize="11" FontWeight="SemiBold" MaxWidth="120" TextTrimming="CharacterEllipsis"
+                                                               Foreground="{Binding FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=text}" />
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Style="{StaticResource ClosedPill}" Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="Lezárva" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource InkSecondaryBrush}" />
+                                            </Border>
+                                            <Border CornerRadius="8" Padding="6,1" Margin="0,0,8,2" VerticalAlignment="Center"
                                                     Background="{Binding DueState, Converter={StaticResource DueStateToSoftBrush}}"
                                                     Visibility="{Binding HasDue, Converter={StaticResource BoolToVis}}">
                                                 <StackPanel Orientation="Horizontal">
@@ -272,7 +473,7 @@
                                                 </StackPanel>
                                             </Border>
                                             <TextBlock Text="{Binding UpdatedText}" Style="{StaticResource CaptionText}" FontSize="11.5" VerticalAlignment="Center" />
-                                        </StackPanel>
+                                        </WrapPanel>
                                     </Grid>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
@@ -316,6 +517,53 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
+                            <!-- Folder of the open note: coloured, clickable (move to another folder) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button x:Name="FolderChip" Click="OnFolderChipClick" Cursor="Hand" Focusable="True"
+                                        ToolTip="A jegyzet mappája – kattints az áthelyezéshez">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Bd" CornerRadius="9" Padding="9,4,8,4" BorderThickness="1"
+                                                    Background="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=soft}"
+                                                    BorderBrush="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=medium}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="&#xE8B7;" Style="{StaticResource IconGlyph}" FontSize="12" Margin="0,0,7,0"
+                                                               Foreground="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=text}" />
+                                                    <TextBlock Text="{Binding SelectedNote.FolderName}" FontSize="12.5" FontWeight="SemiBold" MaxWidth="260"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               Foreground="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=text}" />
+                                                    <TextBlock Text="&#xE70D;" Style="{StaticResource IconGlyph}" FontSize="9" Margin="8,1,0,0"
+                                                               Foreground="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}, ConverterParameter=text}" />
+                                                </StackPanel>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Bd" Property="BorderBrush"
+                                                            Value="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}}" />
+                                                </Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True">
+                                                    <Setter TargetName="Bd" Property="BorderBrush"
+                                                            Value="{Binding SelectedNote.FolderColor, Converter={StaticResource HexToBrush}}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+
+                            <!-- Closed note -->
+                            <Border Margin="0,0,0,12" Padding="12,8" CornerRadius="10" Background="{StaticResource SurfaceSunkenBrush}"
+                                    Visibility="{Binding Editor.IsDone, Converter={StaticResource BoolToVis}}">
+                                <DockPanel>
+                                    <Button DockPanel.Dock="Right" Style="{StaticResource SecondaryButton}" Padding="12,5" Content="Újranyitás"
+                                            Command="{Binding ToggleClosedCommand}" ToolTip="Visszakerül a nyitott jegyzetek közé" />
+                                    <TextBlock Text="&#xE73E;" Style="{StaticResource IconGlyph}" FontSize="13" Margin="0,0,10,0"
+                                               Foreground="{StaticResource InkSecondaryBrush}" />
+                                    <TextBlock Text="Lezárt jegyzet – a „Lezártak” között található." VerticalAlignment="Center" TextWrapping="Wrap"
+                                               FontSize="13" Foreground="{StaticResource InkSecondaryBrush}" Margin="0,0,10,0" />
+                                </DockPanel>
+                            </Border>
+
                             <TextBox x:Name="TitleBox" Style="{StaticResource TitleBox}" Tag="Cím nélkül"
                                      Text="{Binding Editor.Title, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock Text="{Binding Editor.MetaText}" Style="{StaticResource CaptionText}" Margin="2,6,0,0" />
@@ -347,7 +595,8 @@
                                               IsChecked="{Binding Editor.ReminderEnabled}" IsEnabled="{Binding Editor.HasDue}"
                                               ToolTip="Naponta jelez a határidőig és utána is, amíg el nem végzed" />
                                 <ToggleButton Style="{StaticResource ChipToggle}" Tag="&#xE73E;" Content="Kész"
-                                              IsChecked="{Binding Editor.IsDone}" ToolTip="Elvégezve – levétel a teendők közül" />
+                                              IsChecked="{Binding Editor.IsDone}"
+                                              ToolTip="Elvégezve – a jegyzet lezárul és a „Lezártak” közé kerül (onnan újranyitható)" />
 
                                 <Popup x:Name="DuePopup" PlacementTarget="{Binding ElementName=DueToggle}" Placement="Bottom" VerticalOffset="6"
                                        StaysOpen="False" AllowsTransparency="True" PopupAnimation="Fade" Opened="OnDuePopupOpened"
@@ -465,6 +714,165 @@
                     </Grid>
                 </Grid>
             </Grid>
+
+            <!-- ═══════════ Card view: all notes as cards, over the whole window ═══════════ -->
+            <DockPanel Grid.ColumnSpan="3" Background="{StaticResource SurfaceAltBrush}"
+                       Visibility="{Binding IsCardView, Converter={StaticResource BoolToVis}}">
+                <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="0,0,0,1" Padding="24,14,24,6">
+                    <StackPanel>
+                        <DockPanel>
+                            <Button DockPanel.Dock="Left" Style="{StaticResource GhostButton}" Tag="&#xE72B;" Content="Vissza"
+                                    Command="{Binding ToggleCardViewCommand}" ToolTip="Vissza a szerkesztőhöz  (Esc)" Margin="-8,0,10,0" />
+                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                                <TextBlock Text="{Binding ListHeaderText}" FontSize="20" FontWeight="Bold" />
+                                <Border Background="{StaticResource AccentSoftBrush}" CornerRadius="9" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding NoteCountText}" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                                </Border>
+                            </StackPanel>
+                            <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <TextBox Style="{StaticResource SearchBox}" Width="240" Margin="0,4,12,4" Tag="Keresés"
+                                         Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                                <CheckBox Style="{StaticResource ToggleSwitch}" IsChecked="{Binding ShowClosed}" FontSize="13" Margin="0,4,16,4"
+                                          VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding ClosedSwitchText}" FontWeight="Medium" />
+                                </CheckBox>
+                                <Button Style="{StaticResource PrimaryButton}" Padding="12,7" Margin="0,4,0,4" Command="{Binding NewNoteCommand}"
+                                        ToolTip="Új jegyzet  (Ctrl+N)">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE710;" Style="{StaticResource IconGlyph}" FontSize="11" Margin="0,0,7,0" />
+                                        <TextBlock Text="Új jegyzet" />
+                                    </StackPanel>
+                                </Button>
+                            </WrapPanel>
+                        </DockPanel>
+
+                        <!-- Folder filter (same selection as the sidebar) -->
+                        <ListBox Style="{StaticResource NoteList}" Padding="0" Margin="0,12,0,0" ItemContainerStyle="{StaticResource FolderChipItem}"
+                                 ItemsSource="{Binding FolderNav}" SelectedItem="{Binding SelectedNav}">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:FolderNavItemViewModel}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Glyph}" Style="{StaticResource IconGlyph}" FontSize="12" Margin="0,0,7,0"
+                                                   Foreground="{Binding Color, Converter={StaticResource HexToBrush}}" />
+                                        <TextBlock Text="{Binding Name}" FontSize="12.5" FontWeight="Medium" />
+                                        <TextBlock Text="{Binding Count}" Style="{StaticResource CaptionText}" FontSize="11.5" Margin="7,0,0,0"
+                                                   VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </Border>
+
+                <Grid>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="24,6,8,24">
+                        <ItemsControl ItemsSource="{Binding CardGroups}" Focusable="False">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type vm:NoteCardGroupViewModel}">
+                                    <StackPanel Margin="0,16,0,0">
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                                            <TextBlock Text="&#xE8B7;" Style="{StaticResource IconGlyph}" FontSize="15" Margin="0,0,9,0"
+                                                       Foreground="{Binding Color, Converter={StaticResource HexToBrush}}" />
+                                            <TextBlock Text="{Binding Title}" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            <TextBlock Text="{Binding CountText}" Style="{StaticResource CaptionText}" FontSize="12.5" Margin="9,1,0,0"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding Notes}" Focusable="False">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type vm:NoteItemViewModel}">
+                                                    <Button Width="264" Height="184" Margin="0,0,16,16" Cursor="Hand"
+                                                            Command="{Binding DataContext.OpenCardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            ToolTip="Megnyitás – jobb klikk: áthelyezés, lezárás, törlés">
+                                                        <Button.ContextMenu>
+                                                            <StaticResource ResourceKey="NoteContextMenu" />
+                                                        </Button.ContextMenu>
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border x:Name="Bd" Background="{StaticResource SurfaceBrush}" CornerRadius="12"
+                                                                        BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                                                                    <Grid>
+                                                                        <Grid.RowDefinitions>
+                                                                            <RowDefinition Height="5" />
+                                                                            <RowDefinition Height="Auto" />
+                                                                            <RowDefinition Height="*" />
+                                                                            <RowDefinition Height="Auto" />
+                                                                        </Grid.RowDefinitions>
+                                                                        <Border CornerRadius="11,11,0,0"
+                                                                                Background="{Binding FolderColor, Converter={StaticResource HexToBrush}}" />
+                                                                        <DockPanel Grid.Row="1" Margin="16,12,14,0">
+                                                                            <TextBlock DockPanel.Dock="Right" Text="&#xE840;" Style="{StaticResource IconGlyph}" FontSize="11"
+                                                                                       Foreground="{StaticResource AccentBrush}" Margin="8,3,0,0" VerticalAlignment="Top"
+                                                                                       Visibility="{Binding IsPinned, Converter={StaticResource BoolToVis}}" />
+                                                                            <Ellipse DockPanel.Dock="Left" Width="9" Height="9" Margin="0,5,8,0" VerticalAlignment="Top"
+                                                                                     Fill="{Binding Priority, Converter={StaticResource PriorityToBrush}}"
+                                                                                     Visibility="{Binding HasPriority, Converter={StaticResource BoolToVis}}" />
+                                                                            <TextBlock Text="{Binding Title}" FontSize="14.5" FontWeight="SemiBold" TextWrapping="Wrap"
+                                                                                       TextTrimming="CharacterEllipsis" MaxHeight="42" LineHeight="20" />
+                                                                        </DockPanel>
+                                                                        <TextBlock Grid.Row="2" Margin="16,6,16,0" Text="{Binding CardSnippet}" FontSize="12.5"
+                                                                                   Foreground="{StaticResource InkSecondaryBrush}" TextWrapping="Wrap"
+                                                                                   TextTrimming="CharacterEllipsis" LineHeight="18" />
+                                                                        <WrapPanel Grid.Row="3" Margin="16,8,12,12">
+                                                                            <Border Style="{StaticResource ClosedPill}" Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}">
+                                                                                <TextBlock Text="Lezárva" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource InkSecondaryBrush}" />
+                                                                            </Border>
+                                                                            <Border CornerRadius="8" Padding="6,1" Margin="0,0,8,0" VerticalAlignment="Center"
+                                                                                    Background="{Binding DueState, Converter={StaticResource DueStateToSoftBrush}}"
+                                                                                    Visibility="{Binding HasDue, Converter={StaticResource BoolToVis}}">
+                                                                                <StackPanel Orientation="Horizontal">
+                                                                                    <TextBlock Text="&#xE787;" Style="{StaticResource IconGlyph}" FontSize="10" Margin="0,0,5,0"
+                                                                                               Foreground="{Binding DueState, Converter={StaticResource DueStateToBrush}}" />
+                                                                                    <TextBlock Text="{Binding DueText}" FontSize="11" FontWeight="SemiBold"
+                                                                                               Foreground="{Binding DueState, Converter={StaticResource DueStateToBrush}}" />
+                                                                                </StackPanel>
+                                                                            </Border>
+                                                                            <TextBlock Text="{Binding UpdatedText}" Style="{StaticResource CaptionText}" FontSize="11.5"
+                                                                                       VerticalAlignment="Center" />
+                                                                        </WrapPanel>
+                                                                    </Grid>
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                                        <Setter TargetName="Bd" Property="Effect" Value="{StaticResource SoftShadow}" />
+                                                                    </Trigger>
+                                                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                                Visibility="{Binding IsCardViewEmpty, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="Nincs itt megjeleníthető jegyzet." FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                        <TextBlock Text="Válassz másik mappát, kapcsold be a Lezártakat, vagy kezdj egy új jegyzetet." Style="{StaticResource CaptionText}"
+                                   FontSize="13" Margin="0,6,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="380" />
+                    </StackPanel>
+                </Grid>
+            </DockPanel>
         </Grid>
 
         <!-- ═══════════ Status bar ═══════════ -->

@@ -1,31 +1,95 @@
 name: build
 
+# Releases:
+#   * Change the VERSION file (e.g. 1.0.0 → 1.1.0) and push to main  → build + GitHub Release "v1.1.0"
+#   * Or start a commit message with the version: "v1.1.0 – new features" → same, without touching VERSION
+#   * Or push a tag: git tag v1.1.0 && git push origin v1.1.0
+# A version that already has a tag is never released twice; other pushes only build and test.
+
 on:
   push:
     branches: [ main, master ]
     tags: [ "v*" ]
     paths-ignore:
       - "landing/**"
-      - "**/*.md"
   pull_request:
     paths-ignore:
       - "landing/**"
       - "**/*.md"
   workflow_dispatch:
     inputs:
-      version:
-        description: "Version number for the installers (e.g. 1.1.0)"
-        required: false
-        default: "1.0.0"
+      release:
+        description: "Publish a GitHub Release for the version in the VERSION file"
+        type: boolean
+        default: false
 
 permissions:
-  contents: write   # needed to publish a GitHub Release on tags
+  contents: write   # create tags and releases
 
 concurrency:
   group: build-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
+  version:
+    name: Resolve version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      release: ${{ steps.resolve.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # tags are needed to know what was already released
+
+      - id: resolve
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          BEFORE: ${{ github.event.before }}
+          MANUAL_RELEASE: ${{ github.event.inputs.release }}
+        run: |
+          set -euo pipefail
+          shopt -s nocasematch                       # "Release 1.2.0" works too
+          file_version="$(tr -d ' \r\n' < VERSION)"
+          version="$file_version"
+          release=false
+
+          if [[ "$REF_TYPE" == "tag" ]]; then
+            version="${REF_NAME#v}"
+            release=true
+          elif [[ "$EVENT" == "push" ]]; then
+            first_line="$(printf '%s' "$COMMIT_MESSAGE" | head -n1)"
+            if [[ "$first_line" =~ ^(release[[:space:]:]+)?v?([0-9]+\.[0-9]+\.[0-9]+)([[:space:]]|$) ]]; then
+              version="${BASH_REMATCH[2]}"          # "v1.2.0 ..." or "release: 1.2.0"
+              release=true
+            elif [[ "$BEFORE" =~ ^0+$ ]] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
+              release=true                           # first push of the branch: release VERSION if new
+            elif ! git diff --quiet "$BEFORE" "$GITHUB_SHA" -- VERSION; then
+              release=true                           # VERSION file changed in this push
+            fi
+          elif [[ "$EVENT" == "workflow_dispatch" && "$MANUAL_RELEASE" == "true" ]]; then
+            release=true
+          fi
+
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Invalid version '$version' (expected e.g. 1.2.0)"
+            exit 1
+          fi
+
+          # Never release the same version twice (except when the tag push itself is the trigger).
+          if [[ "$release" == "true" && "$REF_TYPE" != "tag" ]] && git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            echo "::notice::v$version is already released – building without a release."
+            release=false
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "release=$release" >> "$GITHUB_OUTPUT"
+          echo "### Version $version – release: $release" >> "$GITHUB_STEP_SUMMARY"
+
   test:
     name: Build & test
     runs-on: windows-latest
@@ -55,8 +119,11 @@ jobs:
 
   package:
     name: Installers
-    needs: test
+    needs: [ version, test ]
+    if: github.event_name != 'pull_request'
     runs-on: windows-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
 
@@ -67,19 +134,9 @@ jobs:
       - name: Install Inno Setup
         run: choco install innosetup --no-progress -y
 
-      - name: Resolve version
-        id: version
-        shell: pwsh
-        run: |
-          $v = if ($env:GITHUB_REF -like "refs/tags/v*") { $env:GITHUB_REF_NAME.TrimStart("v") }
-               elseif ("${{ github.event.inputs.version }}") { "${{ github.event.inputs.version }}" }
-               else { "1.0.0" }
-          "value=$v" >> $env:GITHUB_OUTPUT
-          Write-Host "Version: $v"
-
       - name: Build apps and suite installer
         shell: pwsh
-        run: ./openLauncher/build/build-all.ps1 -Version ${{ steps.version.outputs.value }} -SkipTests
+        run: ./openLauncher/build/build-all.ps1 -Version $env:VERSION -SkipTests
 
       - name: Collect installers
         shell: pwsh
@@ -91,18 +148,21 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: installers-${{ steps.version.outputs.value }}
+          name: installers-${{ env.VERSION }}
           path: dist/*.exe
 
       - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: needs.version.outputs.release == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          name: open* ${{ steps.version.outputs.value }}
+          tag_name: v${{ env.VERSION }}
+          target_commitish: ${{ github.sha }}
+          name: open* ${{ env.VERSION }}
           files: dist/*.exe
           generate_release_notes: true
+          make_latest: true
           body: |
-            **Telepítés:** a legtöbb esetben az `openSuite-Setup-${{ steps.version.outputs.value }}-x64.exe` kell –
+            **Telepítés:** a legtöbb esetben az `openSuite-Setup-${{ env.VERSION }}-x64.exe` kell –
             ebben benne van az openLauncher és mindhárom alkalmazás (telepítéskor választható).
             Az egyes alkalmazások külön telepítői is mellékelve vannak.
 

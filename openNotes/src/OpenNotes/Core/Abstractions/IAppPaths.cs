@@ -7,6 +7,7 @@ public interface IAppPaths
     string NotesDirectory { get; }
     string TrashDirectory { get; }
     string SettingsFile { get; }
+    string FoldersFile { get; }
     string LogDirectory { get; }
     string PreviewCacheDirectory { get; }
     string WebViewDataDirectory { get; }

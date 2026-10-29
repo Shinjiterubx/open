@@ -30,7 +30,7 @@ public sealed class AppCatalog : IAppCatalog
             "openKanban",
             "openKanban",
             "Kanban táblák",
-            "Workspace-ek, táblák és kártyák húzd-és-ejtsd kezeléssel, WIP limittel, címkékkel, határidőkkel és ellenőrzőlistákkal.",
+            "Trello-szerű workspace-ek, táblák és kártyák húzd-és-ejtsd kezeléssel, WIP limittel, címkékkel, határidőkkel és ellenőrzőlistákkal.",
             "#2F5A8A",
             "openKanban.exe",
             "{6A2C9D14-7E3B-4F51-A8C6-2B9E4D7F1A58}",
